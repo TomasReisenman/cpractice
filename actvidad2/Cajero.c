@@ -103,7 +103,12 @@ int main(int argc,char *argv[])
 	int id_semaforo;
 
 	id_semaforo =  creo_semaforo();
-	inicia_semaforo(id_semaforo, VERDE);
+
+	if(num_cajero == 1){
+
+		inicia_semaforo(id_semaforo, VERDE);
+
+	}
 
 	while(1)
 	{
@@ -119,7 +124,7 @@ int main(int argc,char *argv[])
 			{	
 				num = obtener_numero_aleatorio(MIN_IMPORT,MAX_IMPORT);
 				check = obtener_numero_aleatorio(CHECK0,CHECK1);
-				sprintf(cadena,"%d %d \n", num,check);	
+				sprintf(cadena,"%d-%d \n", num,check);	
 				printf("%d %d \n", num,check);	
 				usleep(INTERVALO_PRODUCTO*1000);
 				fprintf(cargador,"%s",cadena);
