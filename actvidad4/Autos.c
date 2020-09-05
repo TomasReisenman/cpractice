@@ -194,7 +194,6 @@ void llega_auto(int colas[],int vias)
 int main(int argc,char *argv[])
 {
 	srand(time(NULL));
-	//juego *memoria = NULL;
 	int id_memoria;
 	int id_semaforo;
 	int acerto = 0;
@@ -205,10 +204,7 @@ int main(int argc,char *argv[])
 	int *vehiculos_en_cola = NULL;
 	int cantidad_vias_disponibles =atoi(argv[1]);
 	vehiculos_en_cola = (int*)creo_memoria(sizeof(int)*cantidad_vias_disponibles, &id_memoria, CLAVE_BASE);
-	//vectorRandom = generarRandom(DESDE,HASTA,99);
-	//printf("the time %d \n",time(NULL));
 
-	//memoria = (juego*)creo_memoria(sizeof(juego)*CANTIDAD, &id_memoria, CLAVE_BASE);
 	
 	while(1)
 	{
@@ -219,10 +215,11 @@ int main(int argc,char *argv[])
 		for(i = 0;i<cantidad_vias_disponibles;i++){
 
 			printf("en la cola %d hay %d vehiculos \n ",i,vehiculos_en_cola[i]);
-			sleep (1);
+			usleep(250);
 		}
 
 		levanta_semaforo(id_semaforo);
+		usleep(1000*obtener_numero_aleatorio(400,600));
 
 	}
 

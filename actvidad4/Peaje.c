@@ -175,12 +175,14 @@ int inicializar_peaje(int colas[],int vias){
 int main(int argc,char *argv[])
 {
 	srand(time(NULL));
-	//int *memoria = NULL;
 	int id_memoria;
 	int id_semaforo;
 	int cantidad_vias_disponibles =atoi(argv[1]);
 	int *vehiculos_en_cola = NULL;
+	int via_atendida=0;
+	int liberaciones = 0;
 
+	FILE *file; 
 	id_semaforo = creo_semaforo();
 
 	inicia_semaforo(id_semaforo, VERDE);
@@ -188,24 +190,54 @@ int main(int argc,char *argv[])
 
 	inicializar_peaje(vehiculos_en_cola,cantidad_vias_disponibles);
 
-
-	//vectorRandom = generarRandom(DESDE,HASTA,99);
-
-	//memoria->estado_acierto = 0;
-	//memoria->numero_pensado = 0;
 	while(1)
 	{
 		espera_semaforo(id_semaforo);			
+
+		printf("Via atendida es %d \n",via_atendida);
+
+		if(vehiculos_en_cola[via_atendida] > 0 && vehiculos_en_cola[via_atendida] < 10)
+		{
+
+			vehiculos_en_cola[via_atendida]--;
+
+
+		}
+
+		if(vehiculos_en_cola[via_atendida] >= 10)
+		{
+
+			printf("liverando via \n");
+			vehiculos_en_cola[via_atendida]=0;
+			file = fopen("liberaciones.txt","w+");
+			fscanf(file,"%d",&liberaciones);
+			liberaciones ++;
+			fprintf(file,"%d",liberaciones);
+			fclose(file);
+
+
+
+		}
+
+
 		int i;
 		for(i = 0;i<cantidad_vias_disponibles;i++){
 
 			printf("en la cola %d hay %d vehiculos \n ",i,vehiculos_en_cola[i]);
-			sleep (1);
+			usleep(250);
 		}
 
 
 
+		via_atendida ++;
+
+		if(via_atendida == cantidad_vias_disponibles)
+		{
+			printf("volviendo a primera via  \n");
+			via_atendida = 0;
+		}
 		levanta_semaforo(id_semaforo);
+		usleep(1000*obtener_numero_aleatorio(100,5000));
 
 	}
 	shmdt ((char *)vehiculos_en_cola);
