@@ -10,7 +10,7 @@
 #define ROJO 0
 #define VERDE 1
 
-#define CANTIDAD 5
+#define CANTIDAD 3
 #define CANTIDAD_TOTAL 10
 #define DESDE 0
 #define HASTA 10
@@ -18,14 +18,15 @@
 
 #define CLAVE_BASE 40
 
-typedef struct tipo_descripcion descripcion;
+typedef struct tipo_panel panel;
 
-struct tipo_descripcion
+struct tipo_panel
 {
-  int codigo;
-  int cantidad;
-  char nombre[LARGO_NOMBRE];
+  int jugador1;
+  int jugador2;
+  int estado; // 0 = no jugo nadie, 1 = gano 1 , 2 = gano 2 
 };
+
 
 
 int obtener_numero_aleatorio(int desde,int hasta)
@@ -175,28 +176,28 @@ int decidir_ganador(int primer_jugada,int segunda_jugada)
 	{
 
 		//Piedra
-		case 0:
+		case 1:
 			switch(segunda_jugada)
 			{
 
 				//Piedra
-				case 0:
+				case 1:
 					resultado = 0;
 					break;
 				//Papel
-				case 1:
+				case 2:
 					resultado = 2;
 					break;
 				//Tijeras
-				case 2:
-					resultado = 1;
-					break;
-				//Lagarto
 				case 3:
 					resultado = 1;
 					break;
-				//Spock
+				//Lagarto
 				case 4:
+					resultado = 1;
+					break;
+				//Spock
+				case 5:
 					resultado = 2;
 					break;
 
@@ -205,28 +206,28 @@ int decidir_ganador(int primer_jugada,int segunda_jugada)
 
 			break;
 		//Papel
-		case 1:
+		case 2:
 			switch(segunda_jugada)
 			{
 
 				//Piedra
-				case 0:
+				case 1:
 					resultado = 1;
 					break;
 				//Papel
-				case 1:
+				case 2:
 					resultado = 0;
 					break;
 				//Tijeras
-				case 2:
-					resultado = 2;
-					break;
-				//Lagarto
 				case 3:
 					resultado = 2;
 					break;
-				//Spock
+				//Lagarto
 				case 4:
+					resultado = 2;
+					break;
+				//Spock
+				case 5:
 					resultado = 1;
 					break;
 
@@ -235,28 +236,28 @@ int decidir_ganador(int primer_jugada,int segunda_jugada)
 
 			break;
 		//Tijeras
-		case 2:
+		case 3:
 			switch(segunda_jugada)
 			{
 
 				//Piedra
-				case 0:
+				case 1:
 					resultado = 2;
 					break;
 				//Papel
-				case 1:
+				case 2:
 					resultado = 1;
 					break;
 				//Tijeras
-				case 2:
+				case 3:
 					resultado = 0;
 					break;
 				//Lagarto
-				case 3:
+				case 4:
 					resultado = 1;
 					break;
 				//Spock
-				case 4:
+				case 5:
 					resultado = 2;
 					break;
 
@@ -265,28 +266,28 @@ int decidir_ganador(int primer_jugada,int segunda_jugada)
 
 			break;
 		//Lagarto
-		case 3:
+		case 4:
 			switch(segunda_jugada)
 			{
 
 				//Piedra
-				case 0:
+				case 1:
 					resultado = 2;
 					break;
 				//Papel
-				case 1:
+				case 2:
 					resultado = 1;
 					break;
 				//Tijeras
-				case 2:
+				case 3:
 					resultado = 2;
 					break;
 				//Lagarto
-				case 3:
+				case 4:
 					resultado = 0;
 					break;
 				//Spock
-				case 4:
+				case 5:
 					resultado = 1;
 					break;
 
@@ -295,28 +296,28 @@ int decidir_ganador(int primer_jugada,int segunda_jugada)
 
 			break;
 		//Spock
-		case 4:
+		case 5:
 			switch(segunda_jugada)
 			{
 
 				//Piedra
-				case 0:
+				case 1:
 					resultado = 1;
 					break;
 				//Papel
-				case 1:
+				case 2:
 					resultado = 2;
 					break;
 				//Tijeras
-				case 2:
+				case 3:
 					resultado = 1;
 					break;
 				//Lagarto
-				case 3:
+				case 4:
 					resultado = 2;
 					break;
 				//Spock
-				case 4:
+				case 5:
 					resultado = 0;
 					break;
 
@@ -330,43 +331,146 @@ int decidir_ganador(int primer_jugada,int segunda_jugada)
 	return resultado;
 }
 
-//int main(int argc,char *argv[])
-int main()
+
+
+void  inicializar_paneles(panel paneles[],int cantidad)
+{
+	int i;
+	for(i = 0;i<cantidad;i++){
+
+		paneles[i].jugador1 = 0;	
+		paneles[i].jugador2 = 0;	
+		paneles[i].estado = 0;	
+	}
+
+}
+
+//int primer_panel_sin_juego(panel paneles[],int cantidad)
+//{
+//	int encontrado  = 0;
+//	int count = 0;
+//
+//	while(encotrado = 0 && count < cantidad)
+//	{
+//
+//		if(paneles[count].estado == 0)
+//		{
+//			encontrado = 1;
+//			return count;
+//		}
+//		else
+//		{
+//			count ++;
+//		}
+//	}
+//
+//	return -1;
+//
+//}
+
+
+//int main()
+int main(int argc,char *argv[])
 {
 	srand(time(NULL));
 	
 	int id_memoria;
 	int id_semaforo;
-	//descripcion *colchones = NULL;
-	char jugadas[][100] = {"PIEDRA","PAPEL","TIJERAS","LAGARTO","SPOCK"};
+	panel *paneles = NULL;
+	char jugadas[][100] = {"NADA","PIEDRA","PAPEL","TIJERAS","LAGARTO","SPOCK"};
 	int resultado;
 	id_semaforo = creo_semaforo();
+	int panel_actual = 0;
+	int jugada = 0;
+	int numero_jugador = atoi(argv[1]);
 
-	inicia_semaforo(id_semaforo, VERDE);
-	//colchones = (descripcion*)creo_memoria(sizeof(descripcion)*CANTIDAD, &id_memoria, CLAVE_BASE);
+	paneles = (panel*)creo_memoria(sizeof(panel)*CANTIDAD, &id_memoria, CLAVE_BASE);
 
-	//inicializar_colchones(colchones,CANTIDAD);
+	if(numero_jugador == 1)
+	{
+		inicia_semaforo(id_semaforo, VERDE);
+		inicializar_paneles(paneles,CANTIDAD);
+	}
 
-	//while(1)
-	//{
+
+	while(panel_actual <3)
+	{
 		espera_semaforo(id_semaforo);			
 
-		//reponer_colchones(colchones,CANTIDAD);
 
-		int i;
-		for(i = 0;i<CANTIDAD;i++){
-
-			printf("Jugada  %s \n",jugadas[i]);
-			//usleep(1000*1000);
+		if(numero_jugador == 1 && paneles[panel_actual].jugador1  == 0)
+		{
+			jugada = obtener_numero_aleatorio(1,5); 
+			printf("Jugador %d eligio %s \n",numero_jugador,jugadas[jugada]);
+			paneles[panel_actual].jugador1  = jugada;	
 		}
 
-		resultado = decidir_ganador(2,2);
-		printf("Resultado %d \n",resultado);	
-		levanta_semaforo(id_semaforo);
-		usleep(500*1000);
+		if(numero_jugador == 2 && paneles[panel_actual].jugador2  == 0)
+		{
+			jugada = obtener_numero_aleatorio(1,5); 
+			printf("Jugador %d eligio %s \n",numero_jugador,jugadas[jugada]);
+			paneles[panel_actual].jugador2  = jugada;	
+		}
 
-	//}
-	//shmdt ((descripcion *)colchones);
-	//shmctl (id_memoria, IPC_RMID, (struct shmid_ds *)NULL);
+		if(paneles[panel_actual].jugador1 != 0 && paneles[panel_actual].jugador2 != 0  )
+		{
+			paneles[panel_actual].estado  = decidir_ganador(paneles[panel_actual].jugador1, paneles[panel_actual].jugador2);
+			printf("Resultado %d \n",paneles[panel_actual].estado);	
+
+			if(paneles[panel_actual].estado == 0)  
+			{
+				paneles[panel_actual].jugador1 = 0; 
+				paneles[panel_actual].jugador2 = 0;  
+
+			}
+		}
+
+		int i;
+		for(i = 0;i<CANTIDAD;i++)
+		{
+			
+			printf("Panel %d \n",i);
+			printf("Jugador 1  %d \n",paneles[i].jugador1);
+			printf("Jugador 2  %d \n",paneles[i].jugador2);
+			printf("Estado   %d \n",paneles[i].estado);
+		}
+
+		if(paneles[panel_actual].estado != 0)
+		{
+			panel_actual ++;
+			printf("Pasar a siguiente panel \n");
+		}
+
+		levanta_semaforo(id_semaforo);
+		usleep(1500*1000);
+
+		
+
+	}
+
+
+
+	int gano1 = 0;
+	int gano2 = 0;
+	int j;
+
+	for(j = 0;j<CANTIDAD;j++)
+	{
+		if(paneles[j].estado == 1)
+		{
+			gano1 ++;
+		}	
+		if(paneles[j].estado == 2)
+		{
+			gano2 ++;
+		}	
+	}
+
+	if(gano1 > gano2) {printf("Gano el 1 con %d  victorias \n",gano1);}
+	if(gano1 < gano2) {printf("Gano el 2 con %d  victorias \n",gano2);}
+	if(gano1 == gano2) {printf("????");}
+
+	shmdt ((panel *)paneles);
+	shmctl (id_memoria, IPC_RMID, (struct shmid_ds *)NULL);
 	return 0;
 }
