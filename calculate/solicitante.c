@@ -62,11 +62,11 @@ int main(int argc,char *argv[])
 		sprintf(cadena, "%d|%d", primer_val, segundo_val);	//armo CODIGO|CANTIDAD
 		//printf("Agrego al COD: %d (%s) CANT: %d\n", codigo, leer_codigos(memoria_codigos, codigo), cantidad);
 
-		if (opcion == 1 ) {
+		if (opcion == EVT_SUMA ) {
 			enviar_mensaje(id_cola_mensajes , MSG_CALCULADOR, MSG_SOLICITANTE, EVT_SUMA, cadena); //Envio para que sume
 		}
 
-		if (opcion == 2 ) {
+		if (opcion == EVT_PRODUCTO ) {
 			enviar_mensaje(id_cola_mensajes , MSG_CALCULADOR, MSG_SOLICITANTE, EVT_PRODUCTO, cadena); //Envio para que sume
 		}
 		//sprintf(cadena, "%d", codigo);
