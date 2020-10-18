@@ -6,118 +6,113 @@
 #define VEHICULOS_HASTA 2
 #define MAX_LIBERAR 10
 
-typedef struct tipo_peaje tpeaje;
-struct tipo_peaje
+pthread_mutex_t mutex;
+
+typedef struct tipo_jugador tjugador;
+struct tipo_jugador
 {
-	int 	nro_via;						
 	int  id_colamensaje;
-	int  cantidad_liberaciones;
+	int  nro_jugador;
+	int  *vector_tambor;
 	
 };
 
-void *ThreadVia (void *parametro)
+void *ThreadJugador (void *parametro)
 {
-	int 			cantidad_vehiculos_en_cola=0;
-	int 			cantidad_liberaciones=0;
-	int 			nro_via;
+	int 			nro_jugador;
 	int 			id_cola_mensajes;
 	int 			done=0;
-	int 			vehiculos;
+	char 	cadena[LARGO_TMENSAJE];
+	int             busqueda = 0;
+	int             found = 0;
 	mensaje		msg;
 	
-	tpeaje *datos_thread = (tpeaje*) parametro;
-	nro_via = datos_thread->nro_via;
+	tjugador *datos_thread = (tjugador*) parametro;
+	nro_jugador = datos_thread->nro_jugador;
 	id_cola_mensajes = datos_thread->id_colamensaje;
-	
-	
-	printf("Soy la via %d\n", nro_via+1);
+	int *vector_tambor = datos_thread->vector_tambor;
 
-	
 	while(done==0)
 	{
-		printf("\nVIA:%d DESTINO:%d\n", nro_via, MSG_VIAS+nro_via);
-		recibir_mensaje(id_cola_mensajes, MSG_VIAS+nro_via, &msg);	//bloqueate
+		recibir_mensaje(id_cola_mensajes, MSG_JUGADOR+nro_jugador, &msg);	//bloqueate
 	
-		/*printf("VIA:%d Destino   %d ", nro_via, (int) msg.long_dest);
-		printf("Remitente %d ", msg.int_rte);
-		printf("Evento    %d ", msg.int_evento);
-		printf("Mensaje   %s ", msg.char_mensaje);*/
+		printf("Remitente %d \n", msg.int_rte);
+		printf("Destino   %d\n", (int) msg.long_dest);
+		printf("Evento    %d \n", msg.int_evento);
+		//printf("Mensaje   %s \n", msg.char_mensaje);
+		printf("------------------------------\n");
 	
 		switch (msg.int_evento)
 		{
-			case EVT_VEHICULOS:
-				cantidad_vehiculos_en_cola += atoi(msg.char_mensaje);
-				printf("\nVIA:%d Cantidad de Vehiculos %d\n", nro_via, cantidad_vehiculos_en_cola);
-				vehiculos = rand()%(VEHICULOS_HASTA+1-VEHICULOS_DESDE)+VEHICULOS_DESDE;
-				printf("\nVIA:%d Saco %d Vehiculos \n", nro_via, vehiculos);
-				
-				cantidad_vehiculos_en_cola -= vehiculos;
-				if(cantidad_vehiculos_en_cola<0)
-					cantidad_vehiculos_en_cola=0;
-				printf("\nVIA:%d Cantidad de Vehiculos %d\n", nro_via, cantidad_vehiculos_en_cola);
-				if(cantidad_vehiculos_en_cola>=MAX_LIBERAR)
+			case EVT_INICIO:
+				pthread_mutex_lock (&mutex);
+				printf("Soy el jugador %d y voy a dispararme \n",nro_jugador);
+
+				while (found == 0 )
 				{
-					cantidad_liberaciones++;
-					cantidad_vehiculos_en_cola=0;
-					printf("\nVIA:%d Libere %d veces \n", nro_via, cantidad_liberaciones);
-				}				
-			break;		    	
-			case EVT_FINALIZAR:
-				printf("\nVIA:%d Finalizar\n", nro_via);
-				printf("VIA:%d Libere %d veces \n", nro_via, cantidad_liberaciones);
-				datos_thread->cantidad_liberaciones = cantidad_liberaciones;
+					if (vector_tambor[busqueda] == 0)
+					{
+						found = 1;
+						vector_tambor[busqueda] = 1;
+					}else {
+						busqueda ++;
+					}
+				}
+				sprintf(cadena, "%d", busqueda);
+				sleep(1);
+				pthread_mutex_unlock (&mutex);
+				enviar_mensaje(id_cola_mensajes , MSG_REVOLVER , MSG_JUGADOR+nro_jugador ,EVT_DISPARO, cadena);
+				printf("Soy el jugador %d y la posicion del tambor es %d \n",nro_jugador,busqueda );
+				break;
+			case EVT_FIN:
+				printf("Jugador eliminado %d \n",nro_jugador);
 				done=1;
-			break;		    	
+				break;
+			case EVT_SALVADO:
+				done=1;
+				break;
 			default:
-				printf("\nVIA:%d Evento sin definir\n", nro_via);
-			break;
+				printf("Jugador %d Evento sin definir\n", nro_jugador);
+				break;
 		}
 	};
 	pthread_exit ((void *)"Listo");
 }
 		
-int main(int argc, char *argv[])
+//int main(int argc, char *argv[])
+int main()
 {
 	int id_cola_mensajes;
-	int i, ctl = 0;
-	int cantidad=1;
-	
-	tpeaje *datos_thread;
-	
+	int i, j = 0;
+	int cantidad_jugadores = 6;
 	srand(time(NULL));
 		
-	if (argc>1)
-		cantidad = atoi(argv[1]);
-
-	printf("%d\n", cantidad);
-	
 	id_cola_mensajes 	= creo_id_cola_mensajes(CLAVE_BASE);
+	int vector_tambor[] = {0,0,0,0,0,0};
 
+	pthread_mutex_init (&mutex, NULL);
 
-
-	pthread_t* idHilo = (pthread_t* ) malloc(sizeof(pthread_t)*cantidad);
+	pthread_t* idHilo = (pthread_t* ) malloc(sizeof(pthread_t)*cantidad_jugadores);
 	pthread_attr_t 	atributos;
 	pthread_attr_init (&atributos);
 	pthread_attr_setdetachstate (&atributos, PTHREAD_CREATE_JOINABLE);
+
+	tjugador *datos_jugador;
+	datos_jugador = (tjugador*) malloc(sizeof(tjugador)*cantidad_jugadores);
 	
-	datos_thread = (tpeaje*) malloc(sizeof(tpeaje)*cantidad);
-	
-	for(i=0; i<cantidad; i++)
+	for(i=0; i<cantidad_jugadores; i++)
 	{
-		datos_thread[i].nro_via = i;
-		datos_thread[i].id_colamensaje = id_cola_mensajes;
-		datos_thread[i].cantidad_liberaciones=0;
-		
-		pthread_create (&idHilo[i], &atributos, ThreadVia, &datos_thread[i]);
+		datos_jugador[i].id_colamensaje = id_cola_mensajes;
+		datos_jugador[i].nro_jugador = i;
+		datos_jugador[i].vector_tambor = vector_tambor;
+		pthread_create (&idHilo[i], &atributos, ThreadJugador, &datos_jugador[i]);
+		sleep(1);
 	}
-	
-	for(i=0; i<cantidad; i++)
+
+	for(j=0; j<cantidad_jugadores; j++)
 	{
-		pthread_join (idHilo[i], NULL);
-		printf("PPAL: Recibi de la via %d: %d\n", i+1, datos_thread[i].cantidad_liberaciones);
-		ctl += datos_thread[i].cantidad_liberaciones;
-	}			
-	printf("PPAL: TOTAL %d\n", ctl);
+		pthread_join (idHilo[j], NULL);
+	}
 	return 0;
 }
 
