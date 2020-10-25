@@ -4,17 +4,14 @@
 #define INTERVALO_DESDE 100
 #define INTERVALO_HASTA 500
 
-//#define VEHICULOS_DESDE 1
-//#define VEHICULOS_HASTA 5
 #define CANTIDAD_CUENTAS 100
 #define DESDE 2500
 #define HASTA 3500
 
 
-void procesar_evento(int id_cola_mensajes, mensaje msg)
+void procesar_evento(int id_cola_mensajes, mensaje msg,int* cuentas)
 {
 	char cadena[LARGO_TMENSAJE];
-	//int nro_recibido = atoi(msg.char_mensaje);
 	char *token;
 	char *mensaje_error;
 	int count = 0;
@@ -31,27 +28,15 @@ void procesar_evento(int id_cola_mensajes, mensaje msg)
 		case EVT_CONSULTA_SALDO:
 			printf("Rta saldo\n");
 			count = 0;
-			token = NULL;
-			token = strtok(msg.char_mensaje, "|");
-			while (token != NULL)
-			{
-				switch (count)
-				{
-					case 0:
-						codigo = atoi(token);
-						printf("COD de cliente:%d \n", codigo);
-					break;
-					case 1:
-						codigo = atoi(token);
-						printf("El saldo resultante es:%d \n", saldo);
-					break;
-				}
-				token = strtok(NULL,"|");
-				count++;
-		    	}
+			codigo = atoi(msg.char_mensaje);
+			saldo = cuentas[codigo];
+			printf("COD de cliente:%d \n", codigo);
+			printf("El saldo del cliente es %d \n",saldo);
+			sprintf(cadena, "%d", saldo);
+			enviar_mensaje(id_cola_mensajes , MSG_CAJERO_AUTOMATICO, MSG_BANCO , EVT_RTA_SALDO, cadena);
 		break;
 		case EVT_DEPOSITO:
-			printf("Rta saldo not ok\n");
+			printf("Se recibio pedido de deposito\n");
 			count = 0;
 			token = NULL;
 			token = strtok(msg.char_mensaje, "|");
@@ -64,16 +49,31 @@ void procesar_evento(int id_cola_mensajes, mensaje msg)
 						printf("COD de cliente:%d \n", codigo);
 					break;
 					case 1:
-						mensaje_error = token;
-						printf("Ocurrio un error :%s \n", mensaje_error);
+						//mensaje_error = token;
+						saldo = atoi(token);
+						printf("Saldo para deposito es :%d \n", saldo);
 					break;
 				}
 				token = strtok(NULL,"|");
 				count++;
 		    	}
+			if (saldo > 0) {
+				printf("Saldo acceptado");
+				cuentas[codigo] += saldo;
+				saldo = cuentas[codigo];
+				sprintf(cadena, "%d|%d",codigo, saldo);
+				enviar_mensaje(id_cola_mensajes , MSG_CAJERO_AUTOMATICO, MSG_BANCO , EVT_RTA_DEPOSITO_OK, cadena);
+			}
+			else {
+				mensaje_error = "El saldo debe ser mayor a 0";
+				printf("Ocurrio un error en deposito");
+				sprintf(cadena, "%d|%s",codigo, mensaje_error);
+				enviar_mensaje(id_cola_mensajes , MSG_CAJERO_AUTOMATICO, MSG_BANCO , EVT_RTA_DEPOSITO_NOK, cadena);
+			}
+
 		break;
 		case EVT_EXTRACCION:
-			printf("Rta deposito \n");
+			printf("Rta extraccion \n");
 			count = 0;
 			token = NULL;
 			token = strtok(msg.char_mensaje, "|");
@@ -86,13 +86,26 @@ void procesar_evento(int id_cola_mensajes, mensaje msg)
 						printf("COD de cliente:%d \n", codigo); //CODIGO
 					break;
 					case 1:
-						codigo = atoi(token);
-						printf("El saldo resultante es:%d \n", saldo);
+						saldo = atoi(token);
+						printf("Saldo para extraccion es :%d \n", saldo);
 					break;
 				}
 				token = strtok(NULL,"|");
 				count++;
 		    	}
+			if (saldo > 0 && cuentas[codigo] >= saldo) {
+				printf("Saldo acceptado");
+				cuentas[codigo] -= saldo;
+				saldo = cuentas[codigo];
+				sprintf(cadena, "%d|%d",codigo, saldo);
+				enviar_mensaje(id_cola_mensajes , MSG_CAJERO_AUTOMATICO, MSG_BANCO , EVT_RTA_SALDO, cadena);
+			}
+			else {
+				mensaje_error = "El saldo debe ser mayor a 0 y menor a la cantidad en cuenta";
+				printf("Ocurrio un error en extraccion");
+				sprintf(cadena, "%d|%s",codigo, mensaje_error);
+				enviar_mensaje(id_cola_mensajes , MSG_CAJERO_AUTOMATICO, MSG_BANCO , EVT_RTA_SALDO_NOK, cadena);
+			}
 		break;
 		default:
 			printf("\nEvento sin definir\n");
@@ -116,34 +129,19 @@ int main()
 {
 	int id_cola_mensajes;
 	int i, j;
-	//int cantidad_jugadores=6;
-	//int nro_elegido=0;
 	int cantidad = 100;
 	char cadena[100];
 	mensaje		msg;
 	int* cuentas = (int*) malloc(cantidad*sizeof(int));
 	inicializar_cuentas(cuentas);
 	
-	//printf("%d\n", cantidad_jugadores);
-	//srand(time(NULL));
 	id_cola_mensajes 	= creo_id_cola_mensajes(CLAVE_BASE);
-	//nro_elegido = rand()%(cantidad_jugadores-0)+0;
-	//printf("El numero elegido es %d\n", nro_elegido);
 
 	borrar_mensajes(id_cola_mensajes);
 
-	//for(i = 0;i<cantidad_jugadores;i++ )
-	//{
-	//	enviar_mensaje(id_cola_mensajes , MSG_JUGADOR+i, MSG_REVOLVER, EVT_INICIO, cadena);
-	//}
-	//for(j=0; j<cantidad_jugadores; j++)
-	//{
-	//	recibir_mensaje(id_cola_mensajes, MSG_REVOLVER, &msg);	//bloqueate
-	//	procesar_evento(id_cola_mensajes,msg,nro_elegido);
-	//}
 	while (1) {
 		recibir_mensaje(id_cola_mensajes, MSG_BANCO, &msg);	//bloqueate
-		procesar_evento(id_cola_mensajes,msg);
+		procesar_evento(id_cola_mensajes,msg,cuentas);
 	}
 
 	return 0;
