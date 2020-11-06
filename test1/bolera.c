@@ -70,13 +70,13 @@ int main()
 			if (datos_jugador[msg.int_rte - 2].pinos_disponibles == 0 && datos_jugador[msg.int_rte - 2].intentos == 1)
 			{
 				printf("CHUZA del jugador  %d\n", msg.int_rte - 2);
-				sprintf(cadena, "%d", 20);
+				sprintf(cadena, "%d|%d",pinos_tirados,20);
 				jugadores_completados++;
 				enviar_mensaje(id_cola_mensajes, msg.int_rte, MSG_BOLERA, EVT_FIN, cadena);
 			}
 			if (datos_jugador[msg.int_rte - 2].pinos_disponibles == 0 && datos_jugador[msg.int_rte - 2].intentos > 1 && datos_jugador[msg.int_rte - 2].intentos < INTENTOS)
 			{
-				sprintf(cadena, "%d", 10);
+				sprintf(cadena, "%d|%d",pinos_tirados, 10);
 				jugadores_completados++;
 				enviar_mensaje(id_cola_mensajes, msg.int_rte, MSG_BOLERA, EVT_FIN, cadena);
 			}
@@ -87,7 +87,7 @@ int main()
 			}
 			if (datos_jugador[msg.int_rte - 2].pinos_disponibles >= 0 && datos_jugador[msg.int_rte - 2].intentos == INTENTOS)
 			{
-				sprintf(cadena, "%d", 10 - datos_jugador[msg.int_rte - 2].pinos_disponibles);
+				sprintf(cadena, "%d|%d",pinos_tirados, 10 - datos_jugador[msg.int_rte - 2].pinos_disponibles);
 				jugadores_completados++;
 				enviar_mensaje(id_cola_mensajes, msg.int_rte, MSG_BOLERA, EVT_FIN, cadena);
 			}

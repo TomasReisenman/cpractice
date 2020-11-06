@@ -20,6 +20,8 @@ void *ThreadJugador (void *parametro)
 	char 	cadena[LARGO_TMENSAJE];
 	int             busqueda = 0;
 	int             found = 0;
+	char *token;
+	int count;
 	mensaje		msg;
 	
 	tjugador *datos_thread = (tjugador*) parametro;
@@ -50,10 +52,27 @@ void *ThreadJugador (void *parametro)
 				printf("Soy el jugador %d y tire %s bolos \n",nro_jugador,msg.char_mensaje);
 				break;
 			case EVT_FIN:
+				token = NULL;
+				token = strtok(msg.char_mensaje, "|");
+				count = 0;
 				printf("Jugador %d recibi el evento fin \n",nro_jugador);
-				printf("Soy el jugador %d y obtuve %s puntos \n",nro_jugador,msg.char_mensaje);
-				puntos_obtenidos = atoi(msg.char_mensaje);
-				datos_thread->puntos_obtenidos = puntos_obtenidos;
+			while (token != NULL)
+			{
+				switch (count)
+				{
+				case 0:
+					printf("Soy el jugador %d y tire %s bolos \n", nro_jugador, token);
+					break;
+				case 1:
+					printf("Soy el jugador %d y obtuve %s puntos \n", nro_jugador, token);
+					puntos_obtenidos = atoi(token);
+					datos_thread->puntos_obtenidos = puntos_obtenidos;
+					break;
+				}
+				token = strtok(NULL,"|");
+				count++;
+		    	}
+				//printf("Soy el jugador %d y obtuve %s puntos \n",nro_jugador,msg.char_mensaje);
 				done=1;
 				break;
 			default:
