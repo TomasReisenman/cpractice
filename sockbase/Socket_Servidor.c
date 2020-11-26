@@ -3,12 +3,7 @@
 *
 * Funciones para la apertura de un socket servidor y la conexion con sus
 * clientes
-*
-* MODIFICACIONES:
-* 4 Septiembre 2003: Añadida función Abre_Socket_Udp() 
 */
-
-/* Includes del sistema */
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -18,8 +13,8 @@
 #include <errno.h>
 
 /*
-*	Abre socket servidor UNIX. Se le pasa el servicio que se desea atender. 
-* Deja el socket preparado
+*	Abre socket servidor UNIX. Se le pasa el servicio que se desea atender y
+* que debe estar dado de alta en /etc/services. Deja el socket preparado
 * para aceptar conexiones de clientes.
 * Devuelve el descritor del socket servidor, que se debera pasar
 * a la funcion Acepta_Conexion_Cliente(). Devuelve -1 en caso de error
@@ -147,58 +142,6 @@ int Abre_Socket_Inet (char *Servicio)
 	* Se avisa al sistema que comience a atender llamadas de clientes
 	*/
 	if (listen (Descriptor, 1) == -1)
-	{
-		close (Descriptor);
-		return -1;
-	}
-
-	/*
-	* Se devuelve el descriptor del socket servidor
-	*/
-	return Descriptor;
-}
-
-/**
- * Abre un socket inet de udp.
- * Se le pasa el nombre de servicio del socket al que debe atender.
- * Devuelve el descriptor del socket abierto o -1 si ha habido algún error.
- */
-int Abre_Socket_Udp (char *Servicio)
-{
-	struct sockaddr_in Direccion;
-	struct servent *Puerto = NULL;
-	int Descriptor;
-
-	/*
-	* se abre el socket
-	*/
-	Descriptor = socket (AF_INET, SOCK_DGRAM, 0);
-	if (Descriptor == -1)
-	{
-	 	return -1;
-	}
-
-	/*
-	* Se obtiene el servicio del fichero /etc/services
-	*/
-	Puerto = getservbyname (Servicio, "udp");
-	if (Puerto == NULL)
-	{
-		return -1;
-	}
-
-	/*
-	* Se rellenan los campos de la estructura Direccion, necesaria
-	* para la llamada a la funcion bind() y se llama a esta.
-	*/
-	Direccion.sin_family = AF_INET;
-	Direccion.sin_port = Puerto->s_port;
-	Direccion.sin_addr.s_addr = INADDR_ANY; 
-
-	if (bind (
-			Descriptor, 
-			(struct sockaddr *)&Direccion, 
-			sizeof (Direccion)) == -1)
 	{
 		close (Descriptor);
 		return -1;
