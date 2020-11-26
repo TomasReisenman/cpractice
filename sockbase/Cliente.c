@@ -7,8 +7,11 @@
 #include <stdio.h>
 #include <Socket_Cliente.h>
 #include <Socket.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-main ()
+int main ()
 {
 	/*
 	* Descriptor del socket y buffer para datos
