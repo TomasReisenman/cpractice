@@ -17,7 +17,7 @@ int main(int argc,char *argv[])
 {
 	while(1)
 	{
-		printf("obtenes valor %d \n",obtener_numero_aleatorio(0,10));
+		printf("obtenes valor %d \n",obtener_numero_aleatorio(2,5));
 	}
 
 }
