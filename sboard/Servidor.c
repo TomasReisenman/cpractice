@@ -21,10 +21,20 @@ typedef struct tipo_tarea ttarea;
 struct tipo_tarea
 {
 	int  nro_tarea;
-	char *descripcion;
+	char descripcion[20];
 };
 
+typedef struct tipo_columna tcolumna;
+struct tipo_columna
+{
+	int  nro_columna;
+	char nombre[20];
+	ttarea *tareas[50];
+};
+
+
 ttarea *tareas[100];
+tcolumna *columnas[100];
 
 char* generar_menu()
 {
@@ -36,15 +46,126 @@ char* generar_menu()
 
 }
 
-void mostrarTareas(ttarea* tareas){
+void agregarColumna(char *nombre)
+{
+
+	//printf("Columna numero: %d descripcion: %s \n",i,tareas[i]->descripcion);
+	tcolumna *nueva_columna = (tcolumna *) malloc(sizeof(tcolumna));
+	
+	strcpy (nueva_columna->nombre, nombre);
+
+	for(int i = 0; i < 5 ; i++) 
+	{ 
+		if(!columnas[i])
+		{
+			nueva_columna->nro_columna = i;
+			columnas[i]= nueva_columna;
+			break;
+
+		}
+
+	}
+}
+
+void borrarColumna(int nro_columna)
+{
+
+	for(int i = 0; i < 5 ; i++) 
+	{ 
+
+		if(!columnas[i])
+		{
+			break;
+
+		}
+
+		if(columnas[i]->nro_columna == nro_columna)
+		{
+			//columnas[i]= NULL;
+			columnas[i]->nro_columna = -1;
+			break;
+
+		}
+	}
+}
+
+void agregarTareaAColumna(int nro_columna,char *descripcion)
+{
+	ttarea *nueva_tarea = (ttarea *) malloc(sizeof(ttarea));
+
+	strcpy (nueva_tarea->descripcion,descripcion);
+
+	ttarea **tareas_columna = columnas[nro_columna]->tareas;
+
+	for(int i = 0; i < 5 ; i++) 
+	{ 
+		if(!tareas_columna[i])
+		{
+			nueva_tarea->nro_tarea = i;
+			tareas_columna[i]= nueva_tarea;
+			break;
+
+		}
+
+	}
+
+}
+
+void mostrarColumnaCompleta(tcolumna *columna)
+{
+
+	ttarea **tareas_columna = columna->tareas;
+
+	for(int i = 0; i < 5 ; i++) 
+	{ 
+			
+		if(!tareas_columna[i])
+		{
+			break;
+
+		}
+
+	printf("Tarea de columna %d: Numero: %d Descripcion: %s \n",columna->nro_columna,
+		tareas_columna[i]->nro_tarea,
+		tareas_columna[i]->descripcion);
+
+	}
+
+
+}
+
+void mostrarColumnas()
+{
+
+	for(int i=0;i<5;i++){
+
+		if(!columnas[i])
+		{
+			break;
+
+		}
+
+		if(columnas[i]->nro_columna != -1)
+		{
+			printf("Columna numero: %d nombre: %s \n",columnas[i]->nro_columna,columnas[i]->nombre);
+
+		}
+
+	}
+
+}
+
+
+//void mostrarTareas(ttarea* tareas){
+void mostrarTareas(){
 
 	printf("Mostrando tareas guardadas \n");
 
 	int i;
 
-	for(i=0;i<2;i++){
+	for(i=0;i<1;i++){
 
-		printf("Tareas numero: %d descripcion: %s \n",i,tareas[i].descripcion);
+		printf("Tareas numero: %d descripcion: %s \n",i,tareas[i]->descripcion);
 
 	}
 
@@ -52,22 +173,25 @@ void mostrarTareas(ttarea* tareas){
 
 void agregar_tarea(int Socket_Cliente)
 {
-	char *Cadena;
-	ttarea nueva_tarea;
+	char Cadena[100];
+	ttarea *nueva_tarea = (ttarea *) malloc(sizeof(ttarea));
 
 	strcpy (Cadena, "Envie informacion de la tarea");
+	printf("Pregunta %s \n",Cadena); 
 	Escribe_Socket (Socket_Cliente, Cadena, MAX_CHAR_SEND + 1);
 
 	Lee_Socket (Socket_Cliente, Cadena, MAX_CHAR_SEND);
+	printf("Descripcion de tarea nueva %s \n",Cadena); 
+	//nueva_tarea.descripcion = Cadena;
+	strcpy (nueva_tarea->descripcion,Cadena);
 
-	nueva_tarea.descripcion = Cadena;
-
-	for(int i = 0; i < 15 ; i++) 
+	printf("here somethin  %s \n",Cadena); 
+	for(int i = 0; i < 5 ; i++) 
 	{ 
 		if(!tareas[i])
 		{
-			nueva_tarea.nro_tarea = i;
-			tareas[i]= &nueva_tarea;
+			nueva_tarea->nro_tarea = i;
+			tareas[i]= nueva_tarea;
 			break;
 
 		}
@@ -82,7 +206,7 @@ void operar_tareas(int opcion_elegida,int Socket_Cliente)
 	switch (opcion_elegida)
 	{
 		case 1:
-			mostrarTareas(tareas);
+			mostrarTareas();
 			break;
 		case 2:
 			agregar_tarea(Socket_Cliente);
@@ -117,8 +241,8 @@ void *ThreadCliente (void *parametro)
 		operar_tareas(opcion_elegida,Socket_Cliente);
 
 		// Cadena para enviar a Cliente long es 15 + \0 al final
-		strcpy (Cadena, generar_menu());
-		Escribe_Socket (Socket_Cliente, Cadena, MAX_CHAR_SEND + 1);
+		//strcpy (Cadena, generar_menu());
+		//Escribe_Socket (Socket_Cliente, Cadena, MAX_CHAR_SEND + 1);
 
 	}
 
@@ -134,8 +258,18 @@ int main ()
 	int Socket_Cliente;
 	char Cadena[100];
 
-	//tareas = (ttarea*) malloc(sizeof(ttarea)*2);
+	agregarColumna("Para hacer");
+	agregarColumna("En progreso");
+	agregarColumna("Terminadas");
+	mostrarColumnas();
+	borrarColumna(1);
+	mostrarColumnas();
 
+	agregarTareaAColumna(0,"cosas");
+	agregarTareaAColumna(0,"mas cosas");
+	mostrarColumnaCompleta(columnas[0]);
+
+	//tareas = (ttarea*) malloc(sizeof(ttarea)*2);
 	//  Se abre el socket servidor, con el servicio "cpp_java" dado de  alta en /etc/services.
 	Socket_Servidor = Abre_Socket_Inet ("cpp_java");
 	if (Socket_Servidor == -1)

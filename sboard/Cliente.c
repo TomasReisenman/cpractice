@@ -14,8 +14,8 @@ int mostrar_menu()
 
     printf("Menu\n\n");
     printf("1.\tConsulta\n");
-    printf("2.\tDeposito\n");
-    printf("3.\tExtraccion\n");
+    printf("2.\tAgregar nueva tarea\n");
+    //printf("3.\tExtraccion\n");
     printf("0.\tSalir\n\n");
     printf("Elija opcion: ");
 
@@ -29,6 +29,36 @@ int mostrar_menu()
     }
     return opcion;
 	
+}
+
+void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
+{
+	char Cadena[100];
+
+	printf("Se eligio %d \n",opcion_elegida); 
+
+	sprintf(Cadena,"%d",opcion_elegida);
+	switch (opcion_elegida)
+	{
+		case 1:
+			Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
+			break;
+		case 2:
+			//printf(" Here we are \n");
+			Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
+			Lee_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND + 1);
+			printf("El servidor dice  %s \n",Cadena); 
+			scanf("%s",Cadena);
+			Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
+			break;
+		case 0:
+			printf("Cliente se desconecta\n" );
+			break;
+		default:
+			printf("Evento sin definir\n" );
+			break;
+	}
+
 }
 
 int main ()
@@ -56,15 +86,15 @@ int main ()
 		// Prepara cadena con 15 caracteres y se envia, 14 letras +  \0 que indica fin de cadena en C
 		//strcpy (Cadena, "Hola");
 		//scanf("%s",Cadena);
-		sprintf(Cadena,"%d",opcion_elegida);
-		printf("Se eligio %d \n",opcion_elegida); 
-		Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
+		//sprintf(Cadena,"%d",opcion_elegida);
+		//printf("Se eligio %d \n",opcion_elegida); 
+		//Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
 
 		// Se lee la informacion enviada por el servidor, que se supone es  una cadena de 6 caracteres.
-		Lee_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND + 1);
-
+		//Lee_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND + 1);
+		realizar_operacion(opcion_elegida,Socket_Con_Servidor);
 		// Se escribe en pantalla la informacion recibida del servidor
-		printf ("Soy cliente, He recibido : %s\n", Cadena);
+		//printf ("Soy cliente, He recibido : %s\n", Cadena);
 		opcion_elegida = mostrar_menu();
 	}
 	sprintf(Cadena,"%d",opcion_elegida);
