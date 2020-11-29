@@ -58,7 +58,10 @@ int main ()
 	* de la cadena es 5 letras + \0 al final de la cadena = 6 caracteres
 	*/
 	strcpy (Cadena, "Adios");
+	sleep(5);
 	Escribe_Socket (Socket_Cliente, Cadena, 6);
+
+	printf("%d Lee return \n",Lee_Socket(Socket_Cliente,Cadena,5));
 
 	/*
 	* Se cierran los sockets

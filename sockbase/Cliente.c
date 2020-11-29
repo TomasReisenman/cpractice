@@ -51,6 +51,8 @@ int main ()
 	*/
 	printf ("Soy cliente, He recibido : %s\n", Cadena);
 
+	strcpy (Cadena, "Hola");
+	Escribe_Socket (Socket_Con_Servidor, Cadena, 5);
 	/*
 	* Se cierra el socket con el servidor
 	*/
