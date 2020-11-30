@@ -1,25 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "Board.h"
 
-typedef struct node_tarea Tarea;
-struct node_tarea {
-	int numero;
-	struct node_tarea *next;
-	char *descripcion;
-} ;
-
-typedef struct node_columna Columna;
-struct node_columna {
-	int numero;
-	struct node_columna *next;
-	Tarea *head_tarea;
-	char *nombre;
-
-} ;
-
-
-void  addTarea(int num,char* descripcion, Columna *columna) {
+void  addTarea(int num,char* descripcion, Columna *columna)
+{
 	Tarea *head_tarea = columna->head_tarea;
 	Tarea  *new_node;
 	new_node = (Tarea *) malloc(sizeof(Tarea));
