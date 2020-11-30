@@ -4,14 +4,14 @@
 
 typedef struct node_tarea Tarea;
 struct node_tarea {
-	int data;
+	int numero;
 	struct node_tarea *next;
 	char *descripcion;
 } ;
 
 typedef struct node_columna Columna;
 struct node_columna {
-	int data;
+	int numero;
 	struct node_columna *next;
 	Tarea *head_tarea;
 	char *nombre;
@@ -19,28 +19,22 @@ struct node_columna {
 } ;
 
 
-//Columna * add(int, Columna *);
-//Columna * remove(int, Columna *);
-//void print(Columna *);
-//int count(Columna *);
-
 void  addTarea(int num,char* descripcion, Columna *columna) {
 	Tarea *head_tarea = columna->head_tarea;
 	Tarea  *new_node;
 	new_node = (Tarea *) malloc(sizeof(Tarea));
-	new_node->data = num;
+	new_node->numero = num;
 	new_node->descripcion = malloc(strlen(descripcion) + 1);
 	strcpy(new_node->descripcion,descripcion);
 	new_node->next= head_tarea;
 	columna->head_tarea = new_node;
-	//return head;
 }
 
 void  appendTarea(int num,char* descripcion, Columna *columna) {
 	Tarea *head_tarea = columna->head_tarea;
 	Tarea  *new_node;
 	new_node = (Tarea *) malloc(sizeof(Tarea));
-	new_node->data = num;
+	new_node->numero = num;
 	new_node->descripcion = malloc(strlen(descripcion) + 1);
 	strcpy(new_node->descripcion,descripcion);
 
@@ -63,16 +57,18 @@ void  appendTarea(int num,char* descripcion, Columna *columna) {
 	//columna->head_tarea = new_node;
 }
 
-void printTarea(int rowNum,Columna *columna)
+char *printTarea(int rowNum,Columna *columna)
 {
 	int count = 0;
 	int printed = 0;
 
 	Tarea  *current_node = columna->head_tarea;
+	char *result = (char *) malloc(sizeof(char)*100);
+
 	while ( current_node != NULL && printed == 0) {
 		if(count == rowNum)
 		{
-			printf("numero:%d descripcion:%s", current_node->data, current_node->descripcion);
+			sprintf(result,"| %d %s ", current_node->numero, current_node->descripcion);
 			printed = 1;
 		}
 		current_node = current_node->next;
@@ -81,8 +77,10 @@ void printTarea(int rowNum,Columna *columna)
 
 	if(printed == 0)
 	{
-		printf(".....");
+		sprintf(result,"|...");
 	}
+
+	return result;
 
 }
 
@@ -92,7 +90,7 @@ Tarea *  removeTarea(int num, Columna *columna) {
 	Tarea *removed = NULL;
 	int cnt = 0;
 	while ( current_node != NULL) {
-		if (current_node->data == num) {
+		if (current_node->numero == num) {
 			removed = current_node;
 			if (current_node == columna->head_tarea) {
 				columna->head_tarea = current_node->next;
@@ -100,7 +98,7 @@ Tarea *  removeTarea(int num, Columna *columna) {
 				prev_node->next = current_node->next;
 			}
 		} 
-		//printf("found here %d \n",current_node->data);
+		//printf("found here %d \n",current_node->numero);
 		prev_node = current_node;
 		current_node = current_node->next;
 	}
@@ -113,7 +111,7 @@ Tarea * findTarea(int num, Columna *columna) {
 	Tarea *current_node = columna->head_tarea;
 	Tarea *found = NULL;
 	while ( current_node != NULL) {
-		if (current_node->data == num) {
+		if (current_node->numero == num) {
 			found = current_node;
 		} 
 		current_node = current_node->next;
@@ -126,7 +124,7 @@ Tarea * findTarea(int num, Columna *columna) {
 Columna * addColumna(int num,char *nombre, Columna *head) {
 	Columna *new_node;
 	new_node = (Columna *) malloc(sizeof(Columna));
-	new_node->data = num;
+	new_node->numero = num;
 	new_node->nombre = malloc(strlen(nombre) + 1);
 	strcpy(new_node->nombre,nombre);
 	new_node->next= head;
@@ -137,7 +135,7 @@ Columna * addColumna(int num,char *nombre, Columna *head) {
 Columna * appendColumna(int num,char *nombre, Columna *head) {
 	Columna *new_node;
 	new_node = (Columna *) malloc(sizeof(Columna));
-	new_node->data = num;
+	new_node->numero = num;
 	new_node->nombre = malloc(strlen(nombre) + 1);
 	strcpy(new_node->nombre,nombre);
 
@@ -159,41 +157,48 @@ Columna * appendColumna(int num,char *nombre, Columna *head) {
 
 	return head;
 }
-void printColumna(Columna *head) {
+char * printColumna(Columna *head) {
 
-    Columna *current_node = head;
-   	while ( current_node != NULL) {
-        printf("numero:%d nombre:%s \n", current_node->data, current_node->nombre);
-        current_node = current_node->next;
-    }
+	char *result = (char *) malloc(sizeof(char)*100);
+	char *temp = (char *) malloc(sizeof(char)*100);
+	Columna *current_node = head;
+	while ( current_node != NULL) {
+		//printf("| %d %s ", current_node->numero, current_node->nombre);
+		sprintf(temp,"| %d %s ", current_node->numero, current_node->nombre);
+		strcat(result,temp);
+		current_node = current_node->next;
+	}
+	strcat(result,"\n");
+	return result;
+
 }
 
 int countColumna(Columna *head) {
-    int cnt = 0;
-    Columna *current_node = head;
-    while ( current_node != NULL) {
-        cnt++;
-        current_node = current_node->next;
-    }
-return(cnt);
+	int cnt = 0;
+	Columna *current_node = head;
+	while ( current_node != NULL) {
+		cnt++;
+		current_node = current_node->next;
+	}
+	return(cnt);
 }
 
 Columna * removeColumna(int num, Columna *head) {
-    Columna *current_node = head;
-    Columna *prev_node;
-    int cnt = 0;
-    while ( current_node != NULL) {
-        if (current_node->data == num) {
-            if (current_node == head) {
-                 head = current_node->next;
-            } else {
-                prev_node->next = current_node->next;
-            }
-        } 
-        prev_node = current_node;
-        current_node = current_node->next;
-    }
-return(head);
+	Columna *current_node = head;
+	Columna *prev_node;
+	int cnt = 0;
+	while ( current_node != NULL) {
+		if (current_node->numero == num) {
+			if (current_node == head) {
+				head = current_node->next;
+			} else {
+				prev_node->next = current_node->next;
+			}
+		} 
+		prev_node = current_node;
+		current_node = current_node->next;
+	}
+	return(head);
 }
 
 Columna * findColumna(int num, Columna *head) {
@@ -201,12 +206,33 @@ Columna * findColumna(int num, Columna *head) {
     Columna *found = NULL;
     int cnt = 0;
     while ( current_node != NULL) {
-        if (current_node->data == num) {
+        if (current_node->numero == num) {
 		found = current_node;
         } 
         current_node = current_node->next;
     }
 return(found);
+}
+
+void moveTarea(Columna *from,Columna *to,int numero)
+{
+
+	Tarea *found = removeTarea(numero,from);
+
+	if(found != NULL)
+	{
+		appendTarea(found->numero,found->descripcion,to);
+
+	}
+
+
+}
+
+void editTarea(Tarea *tarea,char *nueva_descripcion)
+{
+
+	strcpy(tarea->descripcion,nueva_descripcion);
+
 }
 //int  showMenu()
 //{
@@ -283,6 +309,28 @@ return(found);
 //
 //}
 
+char *shortenString(char *word,int num)
+{
+	char *result = (char *) malloc(sizeof(char)*100);
+
+	if(strlen(word) > num)
+	{
+		strncpy(result,word,num);
+		strcat(result,"..");	
+	}
+
+	if(strlen(word) < num)
+	{
+		strcpy(result,word);
+
+		for(int i = 0; i < num - strlen(word) ; i++)  
+		{
+			strcat(result," ");	
+		}
+	}
+	return result;
+}
+
 int main()
 {
 
@@ -291,41 +339,26 @@ int main()
     	Columna *head = NULL;
 	head = appendColumna(1,"Para hacer",head);
 	head = appendColumna(2,"Hecho",head);
-	printColumna(head);
+	printf("%s",printColumna(head));
 
-	addTarea(2,"list",head);	
-	addTarea(3,"list",head);	
-
-
+	appendTarea(2,"list",head);	
+	appendTarea(3,"list",head);	
 	
 	Tarea *lost = removeTarea(3,head);
-	printf(" %d \n",lost->data);
+	printf(" %d \n",lost->numero);
 	addTarea(10,"esto",head);	
-	printTarea(0,head);
-	printTarea(1,head);
-	printTarea(2,head);
-	printTarea(3,head);
+	printf("%s",printTarea(0,head));
+	printf("%s",printTarea(1,head));
+	printf("%s",printTarea(2,head));
+	printf("%s",printTarea(3,head));
 
 	printf("\n-----\n");
-
-    	Columna *head2 = NULL;
-	head2 = addColumna(11,"Done",head2);
-	printColumna(head2);
-
-	addTarea(1,"esto",head2);
-	addTarea(5,"esto",head2);
-	addTarea(20,"esto",head2);
-	printTarea(0,head2);
-	printTarea(1,head2);
-	printTarea(2,head2);
-	printTarea(3,head2);
-
 	printf("\n //////////////////  \n");
 	Columna	*foundC = findColumna(2,head);
 	Tarea	*foundT = findTarea(2,head);
 	
-	printf("Found %d \n",foundC->data);
-	printf("Found %d \n",foundT->data);
+	printf("Found %d \n",foundC->numero);
+	printf("Found %d \n",foundT->numero);
 
 	printf("\n //////////////////  \n");
 
@@ -334,7 +367,23 @@ int main()
 	
 	printTarea(0,foundC);
 	printTarea(1,foundC);
+	printf("%s",printTarea(0,foundC));
+	printf("%s",printTarea(1,foundC));
+	moveTarea(foundC,head,3);
 	
+	Tarea	*foundP = findTarea(3,head);
+	editTarea(foundP,"better desc");
+
+	printf("%s",printTarea(0,head));
+	printf("%s",printTarea(1,head));
+	printf("%s",printTarea(2,head));
+
+	printf("%s",shortenString("a big string lollol",9));	
+
+	char *mystr = "hti";
+	mystr = shortenString(mystr,5);
+	printf(" %s something \n",mystr); 	
+	//printf("\n %s %10s","this","another");
 
 return(0);
 }
