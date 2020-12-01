@@ -25,8 +25,11 @@ int Lee_Socket (int fd, char *Datos, int Longitud)
 	/*
 	* Comprobacion de que los parametros de entrada son correctos
 	*/
-	if ((fd == -1) || (Datos == NULL) || (Longitud < 1))
-		return -1;
+	if ((fd == -1) || (Datos == NULL) || (Longitud < 1)){
+	printf(" here fd %d \n",fd); 
+	printf(" here Datos %s \n",Datos); 
+	printf(" here Long %d\n",Longitud); 
+		return -1;}
 
 	/*
 	* Mientras no hayamos leido todos los datos solicitados

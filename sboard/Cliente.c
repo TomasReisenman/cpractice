@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define MAX_CHAR_SEND 100
+#define MAX_CHAR_SEND 2048
 #define MAX_MENU 5
 
 int mostrar_menu()
@@ -33,7 +33,7 @@ int mostrar_menu()
 
 void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
 {
-	char Cadena[100];
+	char Cadena[MAX_CHAR_SEND];
 
 	printf("Se eligio %d \n",opcion_elegida); 
 
@@ -42,6 +42,10 @@ void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
 	{
 		case 1:
 			Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
+			printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, Cadena, 5));
+			printf("Len mensaje:%s\n",Cadena);
+			printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, Cadena, atoi(Cadena)));
+			printf("El servidor dice:\n%s \n",Cadena); 
 			break;
 		case 2:
 			//printf(" Here we are \n");
@@ -65,7 +69,7 @@ int main ()
 {
 	// Descriptor del socket y buffer para datos
 	int Socket_Con_Servidor;
-	char Cadena[100];
+	char Cadena[MAX_CHAR_SEND];
 	int opcion_elegida = 1;
 
 	//  Abre la conexion con el servidor, (nombre del ordenador,servicio solicitado) 
