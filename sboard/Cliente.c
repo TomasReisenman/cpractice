@@ -11,31 +11,33 @@
 
 int mostrar_menu()
 {
-    int opcion;
-
-    printf("Menu\n\n");
-    printf("1.\tMostrar Board\n");
-    printf("2.\tVer tarea\n");
-    printf("3.\tAgregar nueva tarea\n");
-    printf("4.\tBorrar tarea\n");
-    printf("5.\tModificar tarea\n");
-    printf("6.\tMover tarea\n");
-    printf("7.\tVer columna\n");
-    printf("8.\tAgregar nueva columna\n");
-    printf("9.\tBorrar Columna\n");
-    printf("0.\tSalir\n\n");
-    printf("Elija opcion: ");
-
-    while( (scanf(" %d", &opcion) != 1)
-          || (opcion < 0)
-          || (opcion > MAX_MENU))
-    {
-      fflush(stdin);
-      printf("No valido\n\n");
-      printf("Elija opcion: ");
-    }
-    return opcion;
+	int opcion;
+	char resp[1000];
 	
+
+	printf("Menu\n\n");
+	printf("1.\tMostrar Board\n");
+	printf("2.\tVer tarea\n");
+	printf("3.\tAgregar nueva tarea\n");
+	printf("4.\tBorrar tarea\n");
+	printf("5.\tModificar tarea\n");
+	printf("6.\tMover tarea\n");
+	printf("7.\tVer columna\n");
+	printf("8.\tAgregar nueva columna\n");
+	printf("9.\tBorrar Columna\n");
+	printf("0.\tSalir\n\n");
+	printf("Elija opcion: ");
+
+	fgets(resp,1000,stdin);
+	resp[strcspn(resp,"\n")]=0;
+	return atoi(resp);
+
+}
+
+void read_input(char* resp)
+{
+	fgets(resp,1000,stdin);
+	resp[strcspn(resp,"\n")]=0;
 }
 
 char *server_interaction(int Socket,char *message)
@@ -55,12 +57,12 @@ void agregar_tarea(int Socket,char *Cadena)
 
 	Cadena = server_interaction(Socket,Cadena);
 	printf("El servidor dice:\n%s \n",Cadena); 
-	scanf("%s", Cadena); 
+	read_input(Cadena);
 	Cadena = server_interaction(Socket,Cadena);
 	if(strcmp(Cadena,"0") != 0)
 	{
 		printf("El servidor dice:\n%s \n",Cadena); 
-		scanf("%s", Cadena); 
+		read_input(Cadena);
 		Cadena = server_interaction(Socket,Cadena);
 		printf("El servidor dice:\n%s \n",Cadena); 
 
@@ -74,12 +76,12 @@ void borrar_tarea(int Socket,char *Cadena)
 {
 	Cadena = server_interaction(Socket,Cadena);
 	printf("El servidor dice:\n%s \n",Cadena); 
-	scanf("%s", Cadena); 
+	read_input(Cadena); 
 	Cadena = server_interaction(Socket,Cadena);
 	if(strcmp(Cadena,"0") != 0)
 	{
 		printf("El servidor dice:\n%s \n",Cadena); 
-		scanf("%s", Cadena); 
+		read_input(Cadena); 
 		Cadena = server_interaction(Socket,Cadena);
 		if(strcmp(Cadena,"0") != 0)
 		{
@@ -100,17 +102,17 @@ void modificar_tarea(int Socket,char *Cadena)
 {
 	Cadena = server_interaction(Socket,Cadena);
 	printf("El servidor dice:\n%s \n",Cadena); 
-	scanf("%s", Cadena); 
+	read_input(Cadena); 
 	Cadena = server_interaction(Socket,Cadena);
 	if(strcmp(Cadena,"0") != 0)
 	{
 		printf("El servidor dice:\n%s \n",Cadena); 
-		scanf("%s", Cadena); 
+		read_input(Cadena); 
 		Cadena = server_interaction(Socket,Cadena);
 		if(strcmp(Cadena,"0") != 0)
 		{
 			printf("El servidor dice:\n%s \n",Cadena); 
-			scanf("%s", Cadena); 
+			read_input(Cadena); 
 			Cadena = server_interaction(Socket,Cadena);
 			printf("El servidor dice:\n%s \n",Cadena); 
 		}else
@@ -129,17 +131,17 @@ void mover_tarea(int Socket,char *Cadena)
 {
 	Cadena = server_interaction(Socket,Cadena);
 	printf("El servidor dice:\n%s \n",Cadena); 
-	scanf("%s", Cadena); 
+	read_input(Cadena); 
 	Cadena = server_interaction(Socket,Cadena);
 	if(strcmp(Cadena,"0") != 0)
 	{
 		printf("El servidor dice:\n%s \n",Cadena); 
-		scanf("%s", Cadena); 
+		read_input(Cadena); 
 		Cadena = server_interaction(Socket,Cadena);
 		if(strcmp(Cadena,"0") != 0)
 		{
 			printf("El servidor dice:\n%s \n",Cadena); 
-			scanf("%s", Cadena); 
+			read_input(Cadena); 
 			Cadena = server_interaction(Socket,Cadena);
 			if(strcmp(Cadena,"0") != 0)
 			{
@@ -164,12 +166,12 @@ void ver_tarea(int Socket,char *Cadena)
 
 	Cadena = server_interaction(Socket,Cadena);
 	printf("El servidor dice:\n%s \n",Cadena); 
-	scanf("%s", Cadena); 
+	read_input(Cadena); 
 	Cadena = server_interaction(Socket,Cadena);
 	if(strcmp(Cadena,"0") != 0)
 	{
 		printf("El servidor dice:\n%s \n",Cadena); 
-		scanf("%s", Cadena); 
+		read_input(Cadena); 
 		Cadena = server_interaction(Socket,Cadena);
 		if(strcmp(Cadena,"0") != 0)
 		{
@@ -191,7 +193,7 @@ void ver_columna(int Socket,char *Cadena)
 
 	Cadena = server_interaction(Socket,Cadena);
 	printf("El servidor dice:\n%s \n",Cadena); 
-	scanf("%s", Cadena); 
+	read_input(Cadena); 
 	Cadena = server_interaction(Socket,Cadena);
 	if(strcmp(Cadena,"0") != 0)
 	{
@@ -207,7 +209,7 @@ void agregar_columna(int Socket,char *Cadena)
 
 	Cadena = server_interaction(Socket,Cadena);
 	printf("El servidor dice:\n%s \n",Cadena); 
-	scanf("%s", Cadena); 
+	read_input(Cadena); 
 	Cadena = server_interaction(Socket,Cadena);
 	printf("El servidor dice:\n%s \n",Cadena); 
 }
@@ -217,7 +219,7 @@ void borrar_columna(int Socket,char *Cadena)
 {
 	Cadena = server_interaction(Socket,Cadena);
 	printf("El servidor dice:\n%s \n",Cadena); 
-	scanf("%s", Cadena); 
+	read_input(Cadena); 
 	Cadena = server_interaction(Socket,Cadena);
 	if(strcmp(Cadena,"0") != 0)
 	{
