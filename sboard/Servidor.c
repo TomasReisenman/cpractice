@@ -19,209 +19,21 @@ struct tipo_cliente
 };
 
 Columna *head = NULL;	
+int cantTareas = 0;
 
-//char *setMessegeSize(char *message)
-//{
-//	char *temp = (char *) malloc(sizeof(char)*5);
-//
-//	if(strlen(message) < 5)
-//	{
-//		for(int i = 0; i < 5 - strlen(message) ; i++)  
-//		{
-//			strcat(temp,"0");	
-//		}
-//	}
-//
-//	strcat(temp,message);	
-//
-//	return temp;
-//
-//}
 
-//typedef struct tipo_tarea ttarea;
-//struct tipo_tarea
-//{
-//	int  nro_tarea;
-//	char descripcion[20];
-//};
-//
-//typedef struct tipo_columna tcolumna;
-//struct tipo_columna
-//{
-//	int  nro_columna;
-//	char nombre[20];
-//	ttarea *tareas[50];
-//};
-//
-//
-//ttarea *tareas[100];
-//tcolumna *columnas[100];
+char *client_interaction(int Socket,char *message)
+{
 
-//char* generar_menu()
-//{
-//
-//	//char* menu = "\n\nMenu \n\n 1.\tConsulta\n 2.\tDeposito\n 3.\tExtraccion\n 0.\tSalir\n\nElija opcion: ";
-//	char* menu = "\nConectado a Servidor";
-//
-//	return menu;
-//
-//}
-//
-//void agregarColumna(char *nombre)
-//{
-//
-//	//printf("Columna numero: %d descripcion: %s \n",i,tareas[i]->descripcion);
-//	tcolumna *nueva_columna = (tcolumna *) malloc(sizeof(tcolumna));
-//	
-//	strcpy (nueva_columna->nombre, nombre);
-//
-//	for(int i = 0; i < 5 ; i++) 
-//	{ 
-//		if(!columnas[i])
-//		{
-//			nueva_columna->nro_columna = i;
-//			columnas[i]= nueva_columna;
-//			break;
-//
-//		}
-//
-//	}
-//}
-//
-//void borrarColumna(int nro_columna)
-//{
-//
-//	for(int i = 0; i < 5 ; i++) 
-//	{ 
-//
-//		if(!columnas[i])
-//		{
-//			break;
-//
-//		}
-//
-//		if(columnas[i]->nro_columna == nro_columna)
-//		{
-//			//columnas[i]= NULL;
-//			columnas[i]->nro_columna = -1;
-//			break;
-//
-//		}
-//	}
-//}
-//
-//void agregarTareaAColumna(int nro_columna,char *descripcion)
-//{
-//	ttarea *nueva_tarea = (ttarea *) malloc(sizeof(ttarea));
-//
-//	strcpy (nueva_tarea->descripcion,descripcion);
-//
-//	ttarea **tareas_columna = columnas[nro_columna]->tareas;
-//
-//	for(int i = 0; i < 5 ; i++) 
-//	{ 
-//		if(!tareas_columna[i])
-//		{
-//			nueva_tarea->nro_tarea = i;
-//			tareas_columna[i]= nueva_tarea;
-//			break;
-//
-//		}
-//
-//	}
+	char *Cadena;
 
-//}
+	send_message(Socket,message);
+	Cadena = get_message(Socket);
+	printf("El cliente dice:\n%s \n",Cadena); 
 
-//void mostrarColumnaCompleta(tcolumna *columna)
-//{
-//
-//	ttarea **tareas_columna = columna->tareas;
-//
-//	for(int i = 0; i < 5 ; i++) 
-//	{ 
-//			
-//		if(!tareas_columna[i])
-//		{
-//			break;
-//
-//		}
-//
-//	printf("Tarea de columna %d: Numero: %d Descripcion: %s \n",columna->nro_columna,
-//		tareas_columna[i]->nro_tarea,
-//		tareas_columna[i]->descripcion);
-//
-//	}
-//
-//
-//}
-//
-//void mostrarColumnas()
-//{
-//
-//	for(int i=0;i<5;i++){
-//
-//		if(!columnas[i])
-//		{
-//			break;
-//
-//		}
-//
-//		if(columnas[i]->nro_columna != -1)
-//		{
-//			printf("Columna numero: %d nombre: %s \n",columnas[i]->nro_columna,columnas[i]->nombre);
-//
-//		}
-//
-//	}
-//
-//}
-//
-//
-////void mostrarTareas(ttarea* tareas){
-//void mostrarTareas(){
-//
-//	printf("Mostrando tareas guardadas \n");
-//
-//	int i;
-//
-//	for(i=0;i<1;i++){
-//
-//		printf("Tareas numero: %d descripcion: %s \n",i,tareas[i]->descripcion);
-//
-//	}
-//
-//}
-//
-//void agregar_tarea(int Socket_Cliente)
-//{
-//	char Cadena[100];
-//	ttarea *nueva_tarea = (ttarea *) malloc(sizeof(ttarea));
-//
-//	strcpy (Cadena, "Envie informacion de la tarea");
-//	printf("Pregunta %s \n",Cadena); 
-//	Escribe_Socket (Socket_Cliente, Cadena, MAX_CHAR_SEND + 1);
-//
-//	Lee_Socket (Socket_Cliente, Cadena, MAX_CHAR_SEND);
-//	printf("Descripcion de tarea nueva %s \n",Cadena); 
-//	//nueva_tarea.descripcion = Cadena;
-//	strcpy (nueva_tarea->descripcion,Cadena);
-//
-//	printf("here somethin  %s \n",Cadena); 
-//	for(int i = 0; i < 5 ; i++) 
-//	{ 
-//		if(!tareas[i])
-//		{
-//			nueva_tarea->nro_tarea = i;
-//			tareas[i]= nueva_tarea;
-//			break;
-//
-//		}
-//
-//	}
-//	
-//
-//}
+	return Cadena;
 
+}
 void mostrarBoard(int Socket_Cliente)
 {
 
@@ -246,38 +58,89 @@ void mostrarBoard(int Socket_Cliente)
 	}
 	printf("Se envio al cliente:\n%s",result);
 	sprintf(temp,"%d",strlen(result));
-	//temp = setMessegeSize(temp);
-	//printf("Len mensaje:%s\n",temp);
-	//printf("Result of write %d\n",Escribe_Socket (Socket_Cliente, temp, 5));
-	//printf("Result of write %d\n",Escribe_Socket (Socket_Cliente, result, strlen(result)));
-	//bzero(Socket_Cliente,MAX_CHAR_SEND + 1);
 	send_message(Socket_Cliente,result);
 
 }
 
-void revisarColumna(int Socket_Cliente)
+void verTarea(int Socket_Cliente)
 {
 
-	char *result; //= (char *) malloc(sizeof(char)*MAX_CHAR_SEND);
+	char *result = (char *) malloc(sizeof(char)*MAX_CHAR_SEND);
 	char *temp;
+	Columna *found;
+	Tarea *tarea;
 
-	printf("Se eligio revisar Columna\n");
-
+	printf("Se eligio ver tarea\n");
 	strcpy(result,"Indique nuemro de columna");
-	//sprintf(temp,"%d",strlen(result));
-	//temp = setMessegeSize(temp);
+	temp = client_interaction(Socket_Cliente,result);
+	printf("Se eligio columna %s\n",temp);
 
-	//Escribe_Socket (Socket_Cliente, temp, 5);
-	//Escribe_Socket (Socket_Cliente, result,strlen(result));
+	found = findColumna(atoi(temp),head);
 
-	//Lee_Socket (Socket_Cliente, Cadena, 1);
-	send_message(Socket_Cliente,result);
-	temp = get_message(Socket_Cliente);
-	printf("Se eligio columna  Columna %s\n",temp);
-	sprintf(result,"Se eligio columna  Columna %s\n",temp);
-	send_message(Socket_Cliente,result);
+	if(found != NULL)
+	{
+
+		sprintf(result,"Se eligio columna %s Indique nuemro de tarea \n ",temp);
+		temp = client_interaction(Socket_Cliente,result);
+		printf("Se eligio tarea %s\n",temp);
+		tarea  = findTarea(atoi(temp),found);
+		if(tarea != NULL)
+		{
+			send_message(Socket_Cliente,tarea->descripcion);
+		}else
+		{
+			send_message(Socket_Cliente,"0");
+
+		}
 
 
+	}
+	else{
+		sprintf(result,"0");
+		//temp = client_interaction(Socket_Cliente,result);
+		send_message(Socket_Cliente,"0");
+	
+	}
+
+	//send_message(Socket_Cliente,result);
+
+}
+
+void agregarTarea(int Socket_Cliente)
+{
+
+	char *result = (char *) malloc(sizeof(char)*MAX_CHAR_SEND);
+	char *temp;
+	Columna *found;
+	Tarea *tarea;
+
+	printf("Se eligio agregar  tarea\n");
+	strcpy(result,"Indique nuemro de columna");
+	temp = client_interaction(Socket_Cliente,result);
+	printf("Se eligio columna %s\n",temp);
+
+	found = findColumna(atoi(temp),head);
+
+	if(found != NULL)
+	{
+
+		sprintf(result,"Se eligio columna %s Indique Descipcion de Tarea \n ",temp);
+		temp = client_interaction(Socket_Cliente,result);
+		printf("Descripcion %s\n",temp);
+		//tarea  = findTarea(atoi(temp),found);
+		cantTareas ++;
+		appendTarea(cantTareas,temp,found);	
+		send_message(Socket_Cliente,"Tarea Agregada");
+
+	}
+	else{
+		sprintf(result,"0");
+		//temp = client_interaction(Socket_Cliente,result);
+		send_message(Socket_Cliente,"0");
+	
+	}
+
+	//send_message(Socket_Cliente,result);
 
 }
 void operar_tareas(int opcion_elegida,int Socket_Cliente)
@@ -288,7 +151,10 @@ void operar_tareas(int opcion_elegida,int Socket_Cliente)
 			mostrarBoard(Socket_Cliente);
 			break;
 		case 2:
-			revisarColumna(Socket_Cliente);
+			verTarea(Socket_Cliente);
+			break;
+		case 3:
+			agregarTarea(Socket_Cliente);
 			break;
 		case 0:
 			printf("Cliente se desconecta\n" );
@@ -339,12 +205,16 @@ void inicilalizarBoard()
 	head = appendColumna(1,"En Progreso",head);
 	head = appendColumna(2,"Haciendo",head);
 
-	appendTarea(0,"Diagrama",head);
-	appendTarea(1,"Base de Datos",head);
+	cantTareas ++;	
+	appendTarea(cantTareas,"Diagrama",head);
+	cantTareas ++;	
+	appendTarea(cantTareas,"Base de Datos",head);
 
 	Columna *found = findColumna(1,head);
-	appendTarea(0,"Gant",found);
-	appendTarea(1,"Org app ex",found);
+	cantTareas ++;	
+	appendTarea(cantTareas,"Gant",found);
+	cantTareas ++;	
+	appendTarea(cantTareas,"Org app ex",found);
 
 }
 

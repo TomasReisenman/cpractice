@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <Socket.h>
 #include <Socket_Cliente.h>
 #include <Socket.h>
 #include <string.h>
@@ -14,9 +14,15 @@ int mostrar_menu()
     int opcion;
 
     printf("Menu\n\n");
-    printf("1.\tConsulta\n");
-    printf("2.\tAgregar nueva tarea\n");
-    //printf("3.\tExtraccion\n");
+    printf("1.\tMostrar Board\n");
+    printf("2.\tVer tarea\n");
+    printf("3.\tAgregar nueva tarea\n");
+    printf("4.\tBorrar tarea\n");
+    printf("5.\tModificar tarea\n");
+    printf("6.\tMover tarea\n");
+    printf("7.\tVer columna\n");
+    printf("8.\tAgregar nueva columna\n");
+    printf("9.\tBorrar Columna\n");
     printf("0.\tSalir\n\n");
     printf("Elija opcion: ");
 
@@ -32,10 +38,41 @@ int mostrar_menu()
 	
 }
 
+char *server_interaction(int Socket,char *message)
+{
+
+	char *Cadena;
+
+	send_message(Socket,message);
+	Cadena = get_message(Socket);
+
+	return Cadena;
+
+}
+
+void agregar_tarea(int Socket,char *Cadena)
+{
+
+	Cadena = server_interaction(Socket,Cadena);
+	printf("El servidor dice:\n%s \n",Cadena); 
+	scanf("%s", Cadena); 
+	Cadena = server_interaction(Socket,Cadena);
+	if(strcmp(Cadena,"0") != 0)
+	{
+		printf("El servidor dice:\n%s \n",Cadena); 
+		scanf("%s", Cadena); 
+		Cadena = server_interaction(Socket,Cadena);
+		printf("El servidor dice:\n%s \n",Cadena); 
+
+	}else
+	{
+		printf("Columna no encontrado\n"); 
+	}	
+}
+
 void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
 {
 	char *Cadena = (char *) malloc(sizeof(char)*2048);
-	char *otraCadena;
 
 	printf("Se eligio %d \n",opcion_elegida); 
 
@@ -43,33 +80,34 @@ void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
 	switch (opcion_elegida)
 	{
 		case 1:
-			//Escribe_Socket (Socket_Con_Servidor, Cadena, 1);
-			//printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, Cadena, 5));
-			//printf("Len mensaje:%s\n",Cadena);
-			//printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, Cadena, atoi(Cadena)));
-			send_message(Socket_Con_Servidor,Cadena);
-			otraCadena = get_message(Socket_Con_Servidor);
-			printf("El servidor dice:\n%s \n",otraCadena); 
+			Cadena = server_interaction(Socket_Con_Servidor,Cadena);
+			printf("El servidor dice:\n%s \n",Cadena); 
 			break;
 		case 2:
-			//sprintf(otraCadena,"%d",opcion_elegida);
-			//Escribe_Socket (Socket_Con_Servidor, otraCadena, 1);
-			////Lee_Socket (Socket_Con_Servidor, Cadena, 5);
-			////Lee_Socket (Socket_Con_Servidor, Cadena, atoi(Cadena));
-			//memset(otraCadena,0,sizeof otraCadena);
-			//printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, otraCadena, 5));
-			//printf("Len mensaje:%s\n",otraCadena);
-			//printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, otraCadena, atoi(otraCadena)));
-			//printf("servidor dice:\n%d \n",strlen(otraCadena)); 
-			//printf(" here %\n"); 				
-			send_message(Socket_Con_Servidor,Cadena);
-			otraCadena = get_message(Socket_Con_Servidor);
-			printf("El servidor dice:\n%s \n",otraCadena); 
+			Cadena = server_interaction(Socket_Con_Servidor,Cadena);
+			printf("El servidor dice:\n%s \n",Cadena); 
 			scanf("%s", Cadena); 
-			send_message(Socket_Con_Servidor,Cadena);
-			otraCadena = get_message(Socket_Con_Servidor);
-			printf("El servidor dice:\n%s \n",otraCadena); 
-
+			Cadena = server_interaction(Socket_Con_Servidor,Cadena);
+			if(strcmp(Cadena,"0") != 0)
+			{
+				printf("El servidor dice:\n%s \n",Cadena); 
+				scanf("%s", Cadena); 
+				Cadena = server_interaction(Socket_Con_Servidor,Cadena);
+				if(strcmp(Cadena,"0") != 0)
+				{
+				
+					printf("El servidor dice:\n%s \n",Cadena); 
+				}else
+				{
+					printf("Tarea  no encontrado\n"); 
+				}	
+			}else
+			{
+				printf("Columna no encontrado\n"); 
+			}	
+			break;
+		case 3:
+			agregar_tarea(Socket_Con_Servidor,Cadena);
 			break;
 		case 0:
 			printf("Cliente se desconecta\n" );
@@ -83,14 +121,10 @@ void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
 
 int main ()
 {
-	// Descriptor del socket y buffer para datos
 	int Socket_Con_Servidor;
 	char Cadena[MAX_CHAR_SEND];
 	int opcion_elegida = 1;
 
-	//  Abre la conexion con el servidor, (nombre del ordenador,servicio solicitado) 
-	//  "localhost"  dado de alta en /etc/hosts
-	//  "cpp_java" es un servicio dado de alta en /etc/services
 	Socket_Con_Servidor = Abre_Conexion_Inet ("localhost", "cpp_java");
 	if (Socket_Con_Servidor == 1)
 	{
@@ -102,19 +136,7 @@ int main ()
 	while(opcion_elegida != 0)
 
 	{
-
-		// Prepara cadena con 15 caracteres y se envia, 14 letras +  \0 que indica fin de cadena en C
-		//strcpy (Cadena, "Hola");
-		//scanf("%s",Cadena);
-		//sprintf(Cadena,"%d",opcion_elegida);
-		//printf("Se eligio %d \n",opcion_elegida); 
-		//Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
-
-		// Se lee la informacion enviada por el servidor, que se supone es  una cadena de 6 caracteres.
-		//Lee_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND + 1);
 		realizar_operacion(opcion_elegida,Socket_Con_Servidor);
-		// Se escribe en pantalla la informacion recibida del servidor
-		//printf ("Soy cliente, He recibido : %s\n", Cadena);
 		opcion_elegida = mostrar_menu();
 	}
 	sprintf(Cadena,"%d",opcion_elegida);
