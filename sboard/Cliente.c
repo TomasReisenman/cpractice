@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <Board.h>
 
 #define MAX_CHAR_SEND 2048
 #define MAX_MENU 5
@@ -33,7 +34,8 @@ int mostrar_menu()
 
 void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
 {
-	char Cadena[MAX_CHAR_SEND];
+	char *Cadena = (char *) malloc(sizeof(char)*2048);
+	char *otraCadena;
 
 	printf("Se eligio %d \n",opcion_elegida); 
 
@@ -41,19 +43,33 @@ void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
 	switch (opcion_elegida)
 	{
 		case 1:
-			Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
-			printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, Cadena, 5));
-			printf("Len mensaje:%s\n",Cadena);
-			printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, Cadena, atoi(Cadena)));
-			printf("El servidor dice:\n%s \n",Cadena); 
+			//Escribe_Socket (Socket_Con_Servidor, Cadena, 1);
+			//printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, Cadena, 5));
+			//printf("Len mensaje:%s\n",Cadena);
+			//printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, Cadena, atoi(Cadena)));
+			send_message(Socket_Con_Servidor,Cadena);
+			otraCadena = get_message(Socket_Con_Servidor);
+			printf("El servidor dice:\n%s \n",otraCadena); 
 			break;
 		case 2:
-			//printf(" Here we are \n");
-			Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
-			Lee_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND + 1);
-			printf("El servidor dice  %s \n",Cadena); 
-			scanf("%s",Cadena);
-			Escribe_Socket (Socket_Con_Servidor, Cadena, MAX_CHAR_SEND);
+			//sprintf(otraCadena,"%d",opcion_elegida);
+			//Escribe_Socket (Socket_Con_Servidor, otraCadena, 1);
+			////Lee_Socket (Socket_Con_Servidor, Cadena, 5);
+			////Lee_Socket (Socket_Con_Servidor, Cadena, atoi(Cadena));
+			//memset(otraCadena,0,sizeof otraCadena);
+			//printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, otraCadena, 5));
+			//printf("Len mensaje:%s\n",otraCadena);
+			//printf("Result of read %d\n",Lee_Socket (Socket_Con_Servidor, otraCadena, atoi(otraCadena)));
+			//printf("servidor dice:\n%d \n",strlen(otraCadena)); 
+			//printf(" here %\n"); 				
+			send_message(Socket_Con_Servidor,Cadena);
+			otraCadena = get_message(Socket_Con_Servidor);
+			printf("El servidor dice:\n%s \n",otraCadena); 
+			scanf("%s", Cadena); 
+			send_message(Socket_Con_Servidor,Cadena);
+			otraCadena = get_message(Socket_Con_Servidor);
+			printf("El servidor dice:\n%s \n",otraCadena); 
+
 			break;
 		case 0:
 			printf("Cliente se desconecta\n" );

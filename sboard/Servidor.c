@@ -20,23 +20,23 @@ struct tipo_cliente
 
 Columna *head = NULL;	
 
-char *setMessegeSize(char *message)
-{
-	char *temp = (char *) malloc(sizeof(char)*5);
-
-	if(strlen(message) < 5)
-	{
-		for(int i = 0; i < 5 - strlen(message) ; i++)  
-		{
-			strcat(temp,"0");	
-		}
-	}
-
-	strcat(temp,message);	
-
-	return temp;
-
-}
+//char *setMessegeSize(char *message)
+//{
+//	char *temp = (char *) malloc(sizeof(char)*5);
+//
+//	if(strlen(message) < 5)
+//	{
+//		for(int i = 0; i < 5 - strlen(message) ; i++)  
+//		{
+//			strcat(temp,"0");	
+//		}
+//	}
+//
+//	strcat(temp,message);	
+//
+//	return temp;
+//
+//}
 
 //typedef struct tipo_tarea ttarea;
 //struct tipo_tarea
@@ -246,11 +246,38 @@ void mostrarBoard(int Socket_Cliente)
 	}
 	printf("Se envio al cliente:\n%s",result);
 	sprintf(temp,"%d",strlen(result));
-	temp = setMessegeSize(temp);
-	printf("Len mensaje:%s\n",temp);
-	printf("Result of write %d\n",Escribe_Socket (Socket_Cliente, temp, 5));
-	printf("Result of write %d\n",Escribe_Socket (Socket_Cliente, result, strlen(result)));
+	//temp = setMessegeSize(temp);
+	//printf("Len mensaje:%s\n",temp);
+	//printf("Result of write %d\n",Escribe_Socket (Socket_Cliente, temp, 5));
+	//printf("Result of write %d\n",Escribe_Socket (Socket_Cliente, result, strlen(result)));
 	//bzero(Socket_Cliente,MAX_CHAR_SEND + 1);
+	send_message(Socket_Cliente,result);
+
+}
+
+void revisarColumna(int Socket_Cliente)
+{
+
+	char *result; //= (char *) malloc(sizeof(char)*MAX_CHAR_SEND);
+	char *temp;
+
+	printf("Se eligio revisar Columna\n");
+
+	strcpy(result,"Indique nuemro de columna");
+	//sprintf(temp,"%d",strlen(result));
+	//temp = setMessegeSize(temp);
+
+	//Escribe_Socket (Socket_Cliente, temp, 5);
+	//Escribe_Socket (Socket_Cliente, result,strlen(result));
+
+	//Lee_Socket (Socket_Cliente, Cadena, 1);
+	send_message(Socket_Cliente,result);
+	temp = get_message(Socket_Cliente);
+	printf("Se eligio columna  Columna %s\n",temp);
+	sprintf(result,"Se eligio columna  Columna %s\n",temp);
+	send_message(Socket_Cliente,result);
+
+
 
 }
 void operar_tareas(int opcion_elegida,int Socket_Cliente)
@@ -261,7 +288,7 @@ void operar_tareas(int opcion_elegida,int Socket_Cliente)
 			mostrarBoard(Socket_Cliente);
 			break;
 		case 2:
-			//agregar_tarea(Socket_Cliente);
+			revisarColumna(Socket_Cliente);
 			break;
 		case 0:
 			printf("Cliente se desconecta\n" );
@@ -277,7 +304,7 @@ void *ThreadCliente (void *parametro)
 {
 	int opcion_elegida = 1;
 	int Socket_Cliente;
-	char Cadena[MAX_CHAR_SEND];
+	char *Cadena;
 
 	tcliente *datos_cliente = (tcliente*) parametro;
 	Socket_Cliente = datos_cliente->nro_socket;
@@ -286,7 +313,8 @@ void *ThreadCliente (void *parametro)
 	{
 		// lee info cliente 15 caracteres.
 		printf("Leeyendo info de Cliente\n");
-		Lee_Socket (Socket_Cliente, Cadena, MAX_CHAR_SEND);
+		//Lee_Socket (Socket_Cliente, Cadena, 1);
+		Cadena = get_message(Socket_Cliente);	
 
 		// Se escribe en pantalla la info  que se ha de cliente
 		printf ("Soy Servior, he recibido : %s\n", Cadena);

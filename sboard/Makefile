@@ -6,7 +6,7 @@ Servidor : Servidor.c
 	cc -g -I. Socket.o Socket_Servidor.o Board.o  Servidor.c -o Servidor -pthread
 
 Cliente : Cliente.c
-	cc -g -I. Socket.o Socket_Cliente.o Cliente.c -o Cliente
+	cc -g -I. Socket.o Socket_Cliente.o Cliente.c Board.o -o Cliente
 
 clean :
 	rm *.o Cliente Servidor

@@ -1,4 +1,66 @@
 #include "Board.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <unistd.h>
+#include <errno.h>
+#include <stdio.h>
+
+
+void setMessegeSize(char *message)
+{
+	char *temp = (char *) malloc(sizeof(char)*5);
+	memset(temp,0,sizeof temp);
+
+	if(strlen(message) < 5)
+	{
+		for(int i = 0; i < 5 - strlen(message) ; i++)  
+		{
+			strcat(temp,"0");	
+		}
+	}
+
+	strcat(temp,message);	
+
+	strcpy(message,temp);
+
+}
+
+void send_message(int Socket_Cliente,char* message)
+{
+
+	char *temp = (char *) malloc(sizeof(char)*2048);
+	memset(temp,0,sizeof temp);
+
+	sprintf(temp,"%d",strlen(message));
+	printf("Before write  %s\n",temp); 
+	//temp = setMessegeSize(temp);
+	setMessegeSize(temp);
+	printf("Before write  %s\n",temp); 
+	printf("write %d\n",write (Socket_Cliente, temp, 5));
+	printf("write %d\n",write (Socket_Cliente,message,strlen(message)));
+	//printf("Message send  %s\n",message);
+	printf("Message size  %d\n",strlen(message));
+	printf("After second write  %s\n",temp);
+
+}
+
+char *get_message(int Socket)
+{
+	char *temp = (char *) malloc(sizeof(char)*2048);
+	char *help = (char *) malloc(sizeof(char)*2048);
+	memset(temp,0,sizeof temp);
+	memset(help,0,sizeof help);
+
+	printf("Before read %s\n",temp); 
+	printf("read %d\n",read (Socket,temp,5));
+	printf("Before second read %s\n",temp); 
+	printf("read %d\n",read (Socket,help, atoi(temp)));
+	//printf("After second read  %s\n",help);
+
+	return help;
+
+}
 
 void  addTarea(int num,char* descripcion, Columna *columna)
 {

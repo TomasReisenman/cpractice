@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Socket.h"
+
 
 typedef struct node_tarea Tarea;
 struct node_tarea {
@@ -36,5 +38,7 @@ Columna * findColumna(int num, Columna *head);
 void moveTarea(Columna *from,Columna *to,int numer);
 void editTarea(Tarea *tarea,char *nueva_descripcion);
 char* shortenString(char *word,int num);
+char *get_message(int Socket);
+void send_message(int Socket_Cliente,char* message);
 
 #endif
