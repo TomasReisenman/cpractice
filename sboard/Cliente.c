@@ -7,7 +7,7 @@
 #include <Board.h>
 
 #define MAX_CHAR_SEND 2048
-#define MAX_MENU 5
+#define MAX_MENU 10
 
 int mostrar_menu()
 {
@@ -70,6 +70,165 @@ void agregar_tarea(int Socket,char *Cadena)
 	}	
 }
 
+void borrar_tarea(int Socket,char *Cadena)
+{
+	Cadena = server_interaction(Socket,Cadena);
+	printf("El servidor dice:\n%s \n",Cadena); 
+	scanf("%s", Cadena); 
+	Cadena = server_interaction(Socket,Cadena);
+	if(strcmp(Cadena,"0") != 0)
+	{
+		printf("El servidor dice:\n%s \n",Cadena); 
+		scanf("%s", Cadena); 
+		Cadena = server_interaction(Socket,Cadena);
+		if(strcmp(Cadena,"0") != 0)
+		{
+
+			printf("El servidor dice:\n%s \n",Cadena); 
+		}else
+		{
+			printf("Tarea  no encontrado\n"); 
+		}	
+	}else
+	{
+		printf("Columna no encontrado\n"); 
+	}	
+}
+
+
+void modificar_tarea(int Socket,char *Cadena)
+{
+	Cadena = server_interaction(Socket,Cadena);
+	printf("El servidor dice:\n%s \n",Cadena); 
+	scanf("%s", Cadena); 
+	Cadena = server_interaction(Socket,Cadena);
+	if(strcmp(Cadena,"0") != 0)
+	{
+		printf("El servidor dice:\n%s \n",Cadena); 
+		scanf("%s", Cadena); 
+		Cadena = server_interaction(Socket,Cadena);
+		if(strcmp(Cadena,"0") != 0)
+		{
+			printf("El servidor dice:\n%s \n",Cadena); 
+			scanf("%s", Cadena); 
+			Cadena = server_interaction(Socket,Cadena);
+			printf("El servidor dice:\n%s \n",Cadena); 
+		}else
+		{
+			printf("Tarea  no encontrado\n"); 
+		}	
+	}else
+	{
+		printf("Columna no encontrado\n"); 
+	}	
+}
+
+
+
+void mover_tarea(int Socket,char *Cadena)
+{
+	Cadena = server_interaction(Socket,Cadena);
+	printf("El servidor dice:\n%s \n",Cadena); 
+	scanf("%s", Cadena); 
+	Cadena = server_interaction(Socket,Cadena);
+	if(strcmp(Cadena,"0") != 0)
+	{
+		printf("El servidor dice:\n%s \n",Cadena); 
+		scanf("%s", Cadena); 
+		Cadena = server_interaction(Socket,Cadena);
+		if(strcmp(Cadena,"0") != 0)
+		{
+			printf("El servidor dice:\n%s \n",Cadena); 
+			scanf("%s", Cadena); 
+			Cadena = server_interaction(Socket,Cadena);
+			if(strcmp(Cadena,"0") != 0)
+			{
+				printf("El servidor dice:\n%s \n",Cadena); 
+			}else
+			{
+				printf("Columna  no encontrado\n"); 
+			}	
+		}else
+		{
+			printf("Tarea  no encontrado\n"); 
+		}	
+	}else
+	{
+		printf("Columna no encontrado\n"); 
+	}	
+}
+
+
+void ver_tarea(int Socket,char *Cadena)
+{
+
+	Cadena = server_interaction(Socket,Cadena);
+	printf("El servidor dice:\n%s \n",Cadena); 
+	scanf("%s", Cadena); 
+	Cadena = server_interaction(Socket,Cadena);
+	if(strcmp(Cadena,"0") != 0)
+	{
+		printf("El servidor dice:\n%s \n",Cadena); 
+		scanf("%s", Cadena); 
+		Cadena = server_interaction(Socket,Cadena);
+		if(strcmp(Cadena,"0") != 0)
+		{
+
+			printf("El servidor dice:\n%s \n",Cadena); 
+		}else
+		{
+			printf("Tarea  no encontrado\n"); 
+		}	
+	}else
+	{
+		printf("Columna no encontrado\n"); 
+	}	
+}
+
+
+void ver_columna(int Socket,char *Cadena)
+{
+
+	Cadena = server_interaction(Socket,Cadena);
+	printf("El servidor dice:\n%s \n",Cadena); 
+	scanf("%s", Cadena); 
+	Cadena = server_interaction(Socket,Cadena);
+	if(strcmp(Cadena,"0") != 0)
+	{
+		printf("El servidor dice:\n%s \n",Cadena); 
+	}else
+	{
+		printf("Columna no encontrado\n"); 
+	}	
+}
+
+void agregar_columna(int Socket,char *Cadena)
+{
+
+	Cadena = server_interaction(Socket,Cadena);
+	printf("El servidor dice:\n%s \n",Cadena); 
+	scanf("%s", Cadena); 
+	Cadena = server_interaction(Socket,Cadena);
+	printf("El servidor dice:\n%s \n",Cadena); 
+}
+
+
+void borrar_columna(int Socket,char *Cadena)
+{
+	Cadena = server_interaction(Socket,Cadena);
+	printf("El servidor dice:\n%s \n",Cadena); 
+	scanf("%s", Cadena); 
+	Cadena = server_interaction(Socket,Cadena);
+	if(strcmp(Cadena,"0") != 0)
+	{
+		printf("El servidor dice:\n%s \n",Cadena); 
+	}else
+	{
+		printf("Columna no encontrado\n"); 
+	}	
+}
+
+
 void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
 {
 	char *Cadena = (char *) malloc(sizeof(char)*2048);
@@ -84,30 +243,28 @@ void realizar_operacion(int opcion_elegida,int Socket_Con_Servidor)
 			printf("El servidor dice:\n%s \n",Cadena); 
 			break;
 		case 2:
-			Cadena = server_interaction(Socket_Con_Servidor,Cadena);
-			printf("El servidor dice:\n%s \n",Cadena); 
-			scanf("%s", Cadena); 
-			Cadena = server_interaction(Socket_Con_Servidor,Cadena);
-			if(strcmp(Cadena,"0") != 0)
-			{
-				printf("El servidor dice:\n%s \n",Cadena); 
-				scanf("%s", Cadena); 
-				Cadena = server_interaction(Socket_Con_Servidor,Cadena);
-				if(strcmp(Cadena,"0") != 0)
-				{
-				
-					printf("El servidor dice:\n%s \n",Cadena); 
-				}else
-				{
-					printf("Tarea  no encontrado\n"); 
-				}	
-			}else
-			{
-				printf("Columna no encontrado\n"); 
-			}	
+			ver_tarea(Socket_Con_Servidor,Cadena);
 			break;
 		case 3:
 			agregar_tarea(Socket_Con_Servidor,Cadena);
+			break;
+		case 4:
+			borrar_tarea(Socket_Con_Servidor,Cadena);
+			break;
+		case 5:
+			modificar_tarea(Socket_Con_Servidor,Cadena);
+			break;
+		case 6:
+			mover_tarea(Socket_Con_Servidor,Cadena);
+			break;
+		case 7:
+			ver_columna(Socket_Con_Servidor,Cadena);
+			break;
+		case 8:
+			agregar_columna(Socket_Con_Servidor,Cadena);
+			break;
+		case 9:
+			borrar_columna(Socket_Con_Servidor,Cadena);
 			break;
 		case 0:
 			printf("Cliente se desconecta\n" );
