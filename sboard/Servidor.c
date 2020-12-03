@@ -21,6 +21,7 @@ struct tipo_cliente
 Columna *head = NULL;	
 int cantTareas = 0;
 int cantColumnas = 0;
+int cantClientes = 0;
 
 
 char *client_interaction(int Socket,char *message)
@@ -98,12 +99,10 @@ void verTarea(int Socket_Cliente)
 	}
 	else{
 		sprintf(result,"0");
-		//temp = client_interaction(Socket_Cliente,result);
 		send_message(Socket_Cliente,"0");
 	
 	}
 
-	//send_message(Socket_Cliente,result);
 
 }
 
@@ -175,7 +174,6 @@ void modificarTarea(int Socket_Cliente)
 		tarea  = findTarea(atoi(temp),found);
 		if(tarea != NULL)
 		{
-			//removeTarea(tarea->numero,found);
 			sprintf(result,"Se eligio tarea %s Indique nuevo texto \n ",temp);
 			temp = client_interaction(Socket_Cliente,result);
 			editTarea(tarea,temp);
@@ -222,20 +220,12 @@ void moverTarea(int Socket_Cliente)
 		tarea  = findTarea(atoi(temp),found);
 		if(tarea != NULL)
 		{
-			//removeTarea(tarea->numero,found);
 			sprintf(result,"Se eligio tarea %s Indique columna destino \n ",temp);
 			temp = client_interaction(Socket_Cliente,result);
 			printf("Se eligio Columna %s\n",temp);
 			to = findColumna(atoi(temp),head);
-			//editTarea(tarea,temp);
-			//send_message(Socket_Cliente,"Tarea modificada\n");
 			if(to != NULL)
 			{
-				//removeTarea(tarea->numero,found);
-				//sprintf(result,"Se eligio tarea %s Indique columna destino \n ",temp);
-				//temp = client_interaction(Socket_Cliente,result);
-				//printf("Se eligio Columna %s\n",temp);
-				//to = findColumna(atoi(temp),head);
 				moveTarea(found,to,tarea->numero);
 				send_message(Socket_Cliente,"Tarea movida\n");
 			}else
@@ -280,7 +270,6 @@ void agregarTarea(int Socket_Cliente)
 		sprintf(result,"Se eligio columna %s Indique Descipcion de Tarea \n ",temp);
 		temp = client_interaction(Socket_Cliente,result);
 		printf("Descripcion %s\n",temp);
-		//tarea  = findTarea(atoi(temp),found);
 		cantTareas ++;
 		appendTarea(cantTareas,temp,found);	
 		send_message(Socket_Cliente,"Tarea Agregada");
@@ -288,12 +277,10 @@ void agregarTarea(int Socket_Cliente)
 	}
 	else{
 		sprintf(result,"0");
-		//temp = client_interaction(Socket_Cliente,result);
 		send_message(Socket_Cliente,"0");
 	
 	}
 
-	//send_message(Socket_Cliente,result);
 
 }
 
@@ -428,19 +415,12 @@ void *ThreadCliente (void *parametro)
 
 	while(opcion_elegida !=0)
 	{
-		// lee info cliente 15 caracteres.
 		printf("Leeyendo info de Cliente\n");
-		//Lee_Socket (Socket_Cliente, Cadena, 1);
 		Cadena = get_message(Socket_Cliente);	
-
-		// Se escribe en pantalla la info  que se ha de cliente
 		printf ("Soy Servior, he recibido : %s\n", Cadena);
 		opcion_elegida = atoi(Cadena);
 		operar_tareas(opcion_elegida,Socket_Cliente);
 
-		// Cadena para enviar a Cliente long es 15 + \0 al final
-		//strcpy (Cadena, generar_menu());
-		//Escribe_Socket (Socket_Cliente, Cadena, MAX_CHAR_SEND + 1);
 
 	}
 
@@ -473,7 +453,6 @@ void inicilalizarBoard()
 
 int main ()
 {
-	// Descriptores de socket servidor y de socket con el cliente
 	int Socket_Servidor;
 	int Socket_Cliente;
 	char Cadena[MAX_CHAR_SEND];
@@ -481,19 +460,6 @@ int main ()
 
 	inicilalizarBoard();
 
-	//agregarColumna("Para hacer");
-	//agregarColumna("En progreso");
-	//agregarColumna("Terminadas");
-	//mostrarColumnas();
-	//borrarColumna(1);
-	//mostrarColumnas();
-
-	//agregarTareaAColumna(0,"cosas");
-	//agregarTareaAColumna(0,"mas cosas");
-	//mostrarColumnaCompleta(columnas[0]);
-
-	//tareas = (ttarea*) malloc(sizeof(ttarea)*2);
-	//  Se abre el socket servidor, con el servicio "cpp_java" dado de  alta en /etc/services.
 	Socket_Servidor = Abre_Socket_Inet ("cpp_java");
 	if (Socket_Servidor == -1)
 	{
@@ -502,7 +468,7 @@ int main ()
 	}
 
 
-	pthread_t* idHilo = (pthread_t* ) malloc(sizeof(pthread_t)*2);
+	pthread_t* idHilo = (pthread_t* ) malloc(sizeof(pthread_t)*10);
 	pthread_attr_t 	atributos;
 	pthread_attr_init (&atributos);
 	pthread_attr_setdetachstate (&atributos, PTHREAD_CREATE_JOINABLE);
@@ -514,7 +480,6 @@ int main ()
 	
 	while(1)
 	{
-		// Se espera un cliente que quiera conectarse
 		Socket_Cliente = Acepta_Conexion_Cliente (Socket_Servidor);
 		if (Socket_Servidor == -1)
 		{
@@ -522,9 +487,9 @@ int main ()
 			exit (-1);
 		}
 
-		datos_cliente[0].nro_socket = Socket_Cliente;
-
-		pthread_create (&idHilo[0], &atributos, ThreadCliente, &datos_cliente[0]);
+		datos_cliente[cantClientes].nro_socket = Socket_Cliente;
+		pthread_create (&idHilo[cantClientes], &atributos, ThreadCliente, &datos_cliente[cantClientes]);
+		cantClientes ++;
 	}
 	close (Socket_Servidor);
 }
