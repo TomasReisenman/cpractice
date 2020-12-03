@@ -570,7 +570,50 @@ int Escribe_Socket (int fd, char *Datos, int Longitud)
 }
 
 
+```
 
+## Singnals
+
+```c
+
+void trataSenhal (int);
+
+void *funcionThread (void *parametro)
+{
+	// SIGUSR1 signal defied by user
+	signal (SIGUSR1, trataSenhal);
+	pthread_exit ((void *)"listo");
+}
+
+main()
+{
+	//pid_t idProceso;
+	pthread_attr_t 	atributos;
+	pthread_t 		idHilo;
+	pthread_attr_init (&atributos);
+	pthread_attr_setdetachstate (&atributos, PTHREAD_CREATE_JOINABLE);
+	pthread_create (&idHilo, &atributos, funcionThread, NULL);
+
+	while (1)
+	{
+		sleep (1);
+		kill (getpid(), SIGUSR1);
+	}
+
+	//Wait until a new signal
+	pause();
+	// Send alarm to itself SIGALRM
+	alarm(1);
+}
+
+void trataSenhal (int numeroSenhal)
+{
+	printf ("Recibida señal del padre\n");
+}
 
 
 ```
+SIGINT 2 Interrupt when ctrl C happens
+SIGKILL 9 Kill process
+
+
