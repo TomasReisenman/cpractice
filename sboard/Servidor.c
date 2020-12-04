@@ -40,16 +40,35 @@ void mostrarBoard(int Socket_Cliente)
 {
 
 	Columna *current_node = head;
-	char *temp;
+	char *temp = (char *) malloc(sizeof(char)*MAX_CHAR_SEND);
 	char *result = (char *) malloc(sizeof(char)*MAX_CHAR_SEND);
 
 	printf("Mostrando Board\n");
-	strcat(result,printColumna(head));
-	strcat(result,"|-----------------------|\n");
+	while ( current_node != NULL) {
+		sprintf(temp,"| %d %s ", current_node->numero, current_node->nombre);
+		temp = shortenString(temp,12);
+		strcat(result,temp);
+		current_node = current_node->next;
+	}
+	strcat(result,"\n|");
 
-	for(int i = 0; i < 10; i++) { 
+	for(int i = 0; i < cantColumnas + 1 ; i++) 
+	{
+
+		for(int j = 0; j < 13 ; j++)  
+		{
+			strcat(result,"-");	
+		}
+		strcat(result,"|");
+
+	}
+	strcat(result,"\n");
+	current_node = head;
+	
+
+	for(int k = 0; k < 10; k++) { 
 		while ( current_node != NULL) {
-			temp = printTarea(i,current_node);
+			temp = printTarea(k,current_node);
 			temp = shortenString(temp,12);
 			strcat(result,temp);
 			current_node = current_node->next;
@@ -423,10 +442,13 @@ void *ThreadCliente (void *parametro)
 
 
 	}
+	
 
 	close (Socket_Cliente);
 
 	pthread_exit ((void *)"Listo");
+
+	printf(" around here %\n"); 
 }
 
 void inicilalizarBoard()
@@ -474,7 +496,7 @@ int main ()
 	pthread_attr_setdetachstate (&atributos, PTHREAD_CREATE_JOINABLE);
 
 	tcliente *datos_cliente;
-	datos_cliente = (tcliente*) malloc(sizeof(tcliente)*2);
+	datos_cliente = (tcliente*) malloc(sizeof(tcliente)*10);
 
 
 	

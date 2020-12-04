@@ -207,7 +207,6 @@ char * printColumna(Columna *head) {
 	char *temp = (char *) malloc(sizeof(char)*100);
 	Columna *current_node = head;
 	while ( current_node != NULL) {
-		//printf("| %d %s ", current_node->numero, current_node->nombre);
 		sprintf(temp,"| %d %s ", current_node->numero, current_node->nombre);
 		strcat(result,temp);
 		current_node = current_node->next;
