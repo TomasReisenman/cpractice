@@ -33,15 +33,9 @@ void send_message(int Socket_Cliente,char* message)
 	memset(temp,0,sizeof temp);
 
 	sprintf(temp,"%d",strlen(message));
-	printf("Before write  %s\n",temp); 
-	//temp = setMessegeSize(temp);
 	setMessegeSize(temp);
-	printf("Before write  %s\n",temp); 
-	printf("write %d\n",write (Socket_Cliente, temp, 5));
-	printf("write %d\n",write (Socket_Cliente,message,strlen(message)));
-	//printf("Message send  %s\n",message);
-	printf("Message size  %d\n",strlen(message));
-	printf("After second write  %s\n",temp);
+	write (Socket_Cliente, temp, 5);
+	write (Socket_Cliente,message,strlen(message));
 
 }
 
@@ -52,11 +46,8 @@ char *get_message(int Socket)
 	memset(temp,0,sizeof temp);
 	memset(help,0,sizeof help);
 
-	printf("Before read %s\n",temp); 
-	printf("read %d\n",read (Socket,temp,5));
-	printf("Before second read %s\n",temp); 
-	printf("read %d\n",read (Socket,help, atoi(temp)));
-	//printf("After second read  %s\n",help);
+	read (Socket,temp,5);
+	read (Socket,help, atoi(temp));
 
 	return help;
 
@@ -97,8 +88,6 @@ void  appendTarea(int num,char* descripcion, Columna *columna) {
 		current_node->next = new_node;	
 	}
 
-	//new_node->next= head_tarea;
-	//columna->head_tarea = new_node;
 }
 
 char *printTarea(int rowNum,Columna *columna)
@@ -381,59 +370,3 @@ char *shortenString(char *word,int num)
 	return result;
 }
 
-//int main()
-//{
-//
-//	//showMenu();
-//
-//    	Columna *head = NULL;
-//	head = appendColumna(1,"Para hacer",head);
-//	head = appendColumna(2,"Hecho",head);
-//	printf("%s",printColumna(head));
-//
-//	appendTarea(2,"list",head);	
-//	appendTarea(3,"list",head);	
-//	
-//	Tarea *lost = removeTarea(3,head);
-//	printf(" %d \n",lost->numero);
-//	addTarea(10,"esto",head);	
-//	printf("%s",printTarea(0,head));
-//	printf("%s",printTarea(1,head));
-//	printf("%s",printTarea(2,head));
-//	printf("%s",printTarea(3,head));
-//
-//	printf("\n-----\n");
-//	printf("\n //////////////////  \n");
-//	Columna	*foundC = findColumna(2,head);
-//	Tarea	*foundT = findTarea(2,head);
-//	
-//	printf("Found %d \n",foundC->numero);
-//	printf("Found %d \n",foundT->numero);
-//
-//	printf("\n //////////////////  \n");
-//
-//	appendTarea(2,"chchchch",foundC);	
-//	appendTarea(3,"ddddddd",foundC);	
-//	
-//	printTarea(0,foundC);
-//	printTarea(1,foundC);
-//	printf("%s",printTarea(0,foundC));
-//	printf("%s",printTarea(1,foundC));
-//	moveTarea(foundC,head,3);
-//	
-//	Tarea	*foundP = findTarea(3,head);
-//	editTarea(foundP,"better desc");
-//
-//	printf("%s",printTarea(0,head));
-//	printf("%s",printTarea(1,head));
-//	printf("%s",printTarea(2,head));
-//
-//	printf("%s",shortenString("a big string lollol",9));	
-//
-//	char *mystr = "hti";
-//	mystr = shortenString(mystr,5);
-//	printf(" %s something \n",mystr); 	
-//	//printf("\n %s %10s","this","another");
-//
-//return(0);
-//}

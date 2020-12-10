@@ -9,8 +9,9 @@
 
 #define MAX_CHAR_SEND 2048
 
-#define MAX_MENU 5
+#define MAX_MENU 20
 
+pthread_mutex_t mutex;
 
 typedef struct tipo_cliente tcliente;
 struct tipo_cliente
@@ -46,7 +47,7 @@ void mostrarBoard(int Socket_Cliente)
 	printf("Mostrando Board\n");
 	while ( current_node != NULL) {
 		sprintf(temp,"| %d %s ", current_node->numero, current_node->nombre);
-		temp = shortenString(temp,12);
+		temp = shortenString(temp,MAX_MENU);
 		strcat(result,temp);
 		current_node = current_node->next;
 	}
@@ -55,7 +56,7 @@ void mostrarBoard(int Socket_Cliente)
 	for(int i = 0; i < cantColumnas + 1 ; i++) 
 	{
 
-		for(int j = 0; j < 13 ; j++)  
+		for(int j = 0; j < MAX_MENU + 1 ; j++)  
 		{
 			strcat(result,"-");	
 		}
@@ -69,7 +70,7 @@ void mostrarBoard(int Socket_Cliente)
 	for(int k = 0; k < 10; k++) { 
 		while ( current_node != NULL) {
 			temp = printTarea(k,current_node);
-			temp = shortenString(temp,12);
+			temp = shortenString(temp,20);
 			strcat(result,temp);
 			current_node = current_node->next;
 		}
@@ -384,41 +385,51 @@ void borrarColumna(int Socket_Cliente)
 
 void operar_tareas(int opcion_elegida,int Socket_Cliente)
 {
-	switch (opcion_elegida)
+
+	if(opcion_elegida == 1)
 	{
-		case 1:
-			mostrarBoard(Socket_Cliente);
-			break;
-		case 2:
-			verTarea(Socket_Cliente);
-			break;
-		case 3:
-			agregarTarea(Socket_Cliente);
-			break;
-		case 4:
-			borrarTarea(Socket_Cliente);
-			break;
-		case 5:
-			modificarTarea(Socket_Cliente);
-			break;
-		case 6:
-			moverTarea(Socket_Cliente);
-			break;
-		case 7:
-			verColumna(Socket_Cliente);
-			break;
-		case 8:
-			agregarColumna(Socket_Cliente);
-			break;
-		case 9:
-			borrarColumna(Socket_Cliente);
-			break;
-		case 0:
-			printf("Cliente se desconecta\n" );
-			break;
-		default:
-			printf("Evento sin definir\n" );
-			break;
+
+		mostrarBoard(Socket_Cliente);
+
+	}
+	else{
+
+		pthread_mutex_lock (&mutex);
+		switch (opcion_elegida)
+		{
+			case 2:
+				verTarea(Socket_Cliente);
+				break;
+			case 3:
+				agregarTarea(Socket_Cliente);
+				break;
+			case 4:
+				borrarTarea(Socket_Cliente);
+				break;
+			case 5:
+				modificarTarea(Socket_Cliente);
+				break;
+			case 6:
+				moverTarea(Socket_Cliente);
+				break;
+			case 7:
+				verColumna(Socket_Cliente);
+				break;
+			case 8:
+				agregarColumna(Socket_Cliente);
+				break;
+			case 9:
+				borrarColumna(Socket_Cliente);
+				break;
+			case 0:
+				printf("Cliente se desconecta\n" );
+				break;
+			default:
+				printf("Evento sin definir\n" );
+				break;
+		}
+		pthread_mutex_unlock (&mutex);
+		sleep(2);
 	}
 
 }
@@ -480,6 +491,7 @@ int main ()
 	char Cadena[MAX_CHAR_SEND];
 	printf("Iniciando Server\n");
 
+	pthread_mutex_init (&mutex, NULL);
 	inicilalizarBoard();
 
 	Socket_Servidor = Abre_Socket_Inet ("cpp_java");
